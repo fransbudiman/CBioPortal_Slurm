@@ -56,5 +56,6 @@ fi
 # Run VEP on each VCF in $VCF_DIR
 for vcf in $VCF_DIR/*.vcf; do
     mkdir -p $SCRATCH/cbioportal_projects/logs
-    sbatch --output=$SCRATCH/cbioportal_projects/logs/vep_%A.out $SCRIPT_DIR/vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${vcf%.vcf}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
+    SAMPLE_NAME=$(basename ${vcf%.vcf})
+    sbatch --output=$SCRATCH/cbioportal_projects/logs/vep_%A.out $SCRIPT_DIR/vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
 done
