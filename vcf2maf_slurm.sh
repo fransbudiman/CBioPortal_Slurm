@@ -1,3 +1,4 @@
+#!/bin/bash
 #SBATCH --job-name=vcf2maf
 #SBATCH --time=00:30:00
 
