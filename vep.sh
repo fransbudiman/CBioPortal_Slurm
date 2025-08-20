@@ -50,6 +50,7 @@ elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
     else
         singularity exec vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh38
     fi
+fi
 
 # Run VEP on each VCF in $VCF_DIR
 for vcf in $VCF_DIR/*.vcf; do
