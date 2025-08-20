@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":i:n:d:v:" opt; do
+while getopts ":i:n:d:v:r:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
     ;;
@@ -10,12 +10,14 @@ while getopts ":i:n:d:v:" opt; do
     ;;
     v) VCF_DIR="$OPTARG"
     ;;
+    r) REF_FASTA="$OPTARG"
+    ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
   esac
 done
 
-./setup.sh -i $STUDY_ID -n $STUDY_NAME -d $STUDY_DESC -v $VCF_DIR
+./setup.sh -i $STUDY_ID -n $STUDY_NAME -d $STUDY_DESC -v $VCF_DIR -r $REF_FASTA
 
 # Storing all FASTA references
 REF_DIR="$SCRATCH/cbioportal_projects/references"
