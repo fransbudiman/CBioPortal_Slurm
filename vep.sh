@@ -36,6 +36,7 @@ if [ ! -f vep.sif ]; then
     singularity pull --name vep.sif docker://ensemblorg/ensembl-vep
 fi
 
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo "REF_DIR is: $REF_DIR"
 
 if [ "$CACHE_BUILD" = "hg19/GRCh37" ]; then
@@ -55,7 +56,6 @@ elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
 fi
 
 # Run VEP on each VCF in $VCF_DIR
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo "${BASH_SOURCE[0]}"
 echo "SCRIPT_DIR is: $SCRIPT_DIR"
 for vcf in $VCF_DIR/*.vcf; do
