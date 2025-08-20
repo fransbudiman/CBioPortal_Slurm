@@ -56,6 +56,7 @@ fi
 
 # Run VEP on each VCF in $VCF_DIR
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+echo "${BASH_SOURCE[0]}"
 echo "SCRIPT_DIR is: $SCRIPT_DIR"
 for vcf in $VCF_DIR/*.vcf; do
     sbatch $SCRIPT_DIR/vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${vcf%.vcf}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
