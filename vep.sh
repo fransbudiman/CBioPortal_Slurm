@@ -32,7 +32,9 @@ esac
 
 
 cd $SCRATCH/cbioportal_projects/tools
-singularity pull --name vep.sif docker://ensemblorg/ensembl-vep
+if [ ! -f vep.sif ]; then
+    singularity pull --name vep.sif docker://ensemblorg/ensembl-vep
+fi
 
 if [ "$CACHE_BUILD" = "hg19/GRCh37" ]; then
     ASSEMBLY="GRCh37"
