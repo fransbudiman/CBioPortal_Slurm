@@ -31,7 +31,7 @@ case $choice in
 esac
 
 
-cd cbioportal_projects/tools
+cd $SCRATCH/cbioportal_projects/tools
 singularity pull --name vep.sif docker://ensemblorg/ensembl-vep
 
 if [ "$CACHE_BUILD" = "hg19/GRCh37" ]; then
@@ -51,5 +51,5 @@ elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
 
 # Run VEP on each VCF in $VCF_DIR
 for vcf in $VCF_DIR/*.vcf; do
-    ./vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${vcf%.vcf}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
+    sbatch vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${vcf%.vcf}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
 done
