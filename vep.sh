@@ -30,14 +30,14 @@ case $choice in
      ;;
 esac
 
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+echo "SCRIPT_DIR before is: $SCRIPT_DIR"
 
 cd $SCRATCH/cbioportal_projects/tools
 if [ ! -f vep.sif ]; then
     singularity pull --name vep.sif docker://ensemblorg/ensembl-vep
 fi
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-echo "SCRIPT_DIR before is: $SCRIPT_DIR"
 
 echo "REF_DIR is: $REF_DIR"
 
