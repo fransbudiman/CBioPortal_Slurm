@@ -43,14 +43,14 @@ if [ "$CACHE_BUILD" = "hg19/GRCh37" ]; then
     if compgen -G "$REF_DIR/homo_sapiens/*GRCh37*" > /dev/null; then
         echo "Cache for $CACHE_BUILD already exists."
     else
-        singularity exec vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh37
+        singularity exec --bind $REF_DIR:$REF_DIR vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh37
     fi
 elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
     ASSEMBLY="GRCh38"
     if compgen -G "$REF_DIR/homo_sapiens/*GRCh38*" > /dev/null; then
         echo "Cache for $CACHE_BUILD already exists."
     else
-        singularity exec vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh38
+        singularity exec --bind $REF_DIR:$REF_DIR vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh38
     fi
 fi
 
