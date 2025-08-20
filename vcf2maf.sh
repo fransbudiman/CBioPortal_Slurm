@@ -1,9 +1,7 @@
 
-while getopts ":i:o:p:r:" opt; do
+while getopts ":i:p:r:" opt; do
   case $opt in
     i) VEP_VCF_DIR="$OPTARG"
-    ;;
-    o) OUTPUT_MAF="$OPTARG"
     ;;
     r) REF_FASTA="$OPTARG"
     ;;
@@ -18,8 +16,6 @@ done
 REF_DIR="$SCRATCH/cbioportal_projects/references"
 # Storing all result
 RESULT_DIR="$SCRATCH/cbioportal_projects/results"
-# # Final project directory to upload to CBioPortal
-# PROJECT_DIR="$RESULT_DIR/${PROJECT_NAME}_cbioportal"
 # Temporary directory for intermediate files (delete after upload)
 TEMP_DIR="$RESULT_DIR/${PROJECT_NAME}_temp"
 
