@@ -16,5 +16,6 @@ while getopts ":i:o:r:" opt; do
 done
 
 module load perl/5.30.3
+module load samtools
 
 perl vcf2maf.pl --input-vcf $INPUT_VCF --output-maf $OUTPUT_MAF --ref-fasta $REF_FASTA --verbose --inhibit-vep
