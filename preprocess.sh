@@ -30,5 +30,6 @@ STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 # Temporary directory for intermediate files (delete after upload)
 TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 
+mkdir -p $TEMP_DIR/vep_output
 ./vep.sh -i $VCF_DIR -o $TEMP_DIR/vep_output -r $REF_DIR -s $STUDY_ID
 
