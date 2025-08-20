@@ -19,6 +19,8 @@ RESULT_DIR="$SCRATCH/cbioportal_projects/results"
 # Temporary directory for intermediate files (delete after upload)
 TEMP_DIR="$RESULT_DIR/${PROJECT_NAME}_temp"
 
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 # Download and extract vcf2maf scripts
 mkdir -p $SCRATCH/cbioportal_projects/tools
 cd $SCRATCH/cbioportal_projects/tools
@@ -29,6 +31,6 @@ fi
 
 # Run the vcf2maf.pl on each vep.vcf file in the input directory through slurm
 for vcf in $VEP_VCF_DIR/*.vcf; do
-    sbatch vcf2maf_slurm.sh -i $vcf -o $TEMP_DIR/maf_files/$(basename $vcf .vcf).maf -r $REF_FASTA
+    sbatch --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $vcf -o $TEMP_DIR/maf_files/$(basename $vcf .vcf).maf -r $REF_FASTA
 done
 

@@ -1,6 +1,5 @@
 #SBATCH --job-name=vcf2maf
-#SBATCH --output=vcf2maf_%j.log
-#SBATCH --time=02:00:00
+#SBATCH --time=00:30:00
 
 getopts ":i:o:r:" opt; do
   case $opt in
@@ -15,3 +14,6 @@ getopts ":i:o:r:" opt; do
   esac
 done
 
+module load perl/5.30.3
+
+perl vcf2maf.pl --input-vcf $INPUT_VCF --output-maf $OUTPUT_MAF --ref-fasta $REF_FASTA --verbose --inhibit-vep
