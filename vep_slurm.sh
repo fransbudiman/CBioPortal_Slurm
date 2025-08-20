@@ -21,4 +21,4 @@ while getopts ":i:o:r:s:a:" opt; do
   esac
 done
 
-singularity exec --bind $SCRATCH:$SCRATCH vep.sif vep --dir $REF_DIR --cache --offline --format vcf --vcf --force-overwrite --input_file $VCF_FILE --output_file $OUTPUT_FILE --assembly $ASSEMBLY
+singularity exec --bind $SCRATCH:$SCRATCH vep.sif vep --dir $REF_DIR --cache --offline --format vcf --vcf --force_overwrite --input_file $VCF_FILE --output_file $OUTPUT_FILE --assembly $ASSEMBLY
