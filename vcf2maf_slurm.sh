@@ -2,7 +2,7 @@
 #SBATCH --job-name=vcf2maf
 #SBATCH --time=00:30:00
 
-getopts ":i:o:r:" opt; do
+while getopts ":i:o:r:" opt; do
   case $opt in
     i) INPUT_VCF="$OPTARG"
     ;;
