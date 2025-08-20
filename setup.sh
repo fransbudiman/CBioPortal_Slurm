@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":i:n:d:v:" opt; do
+while getopts ":i:n:d:v:r:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
     ;;
@@ -9,6 +9,8 @@ while getopts ":i:n:d:v:" opt; do
     d) STUDY_DESC="$OPTARG"
     ;;
     v) VCF_DIR="$OPTARG"
+    ;;
+    r) REF_FASTA="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
@@ -36,3 +38,31 @@ for vcf in $VCF_DIR/*.vcf; do
     echo "Processing $vcf..."
     python process_vcf.py --input-vcf $vcf --output-dir $TEMP_DIR/processed_vcf
 done
+
+module load samtools
+
+if [ $REF_FASTA = "hg19" ]; then
+    if [ -f "$REF_DIR/hg19.fa.gz" ] && [ -f "$REF_DIR/hg19.fa.gz.fai" ]; then
+        echo "hg19 reference already exists."
+    else
+        echo "Downloading hg19 reference..."
+        wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
+        mv hg19.fa.gz $REF_DIR/hg19.fa.gz
+        gunzip $REF_DIR/hg19.fa.gz
+        bgzip $REF_DIR/hg19.fa
+        samtools faidx $REF_DIR/hg19.fa.gz
+    fi
+
+elif [ $REF_FASTA = "hg38" ]; then
+    if [ -f "$REF_DIR/hg38.fa.gz" ] && [ -f "$REF_DIR/hg38.fa.gz.fai" ]; then
+        echo "hg38 reference already exists."
+    else
+        echo "Downloading hg38 reference..."
+        wget http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+        mv hg38.fa.gz $REF_DIR/hg38.fa.gz
+        gunzip $REF_DIR/hg38.fa.gz
+        bgzip $REF_DIR/hg38.fa
+        samtools faidx $REF_DIR/hg38.fa.gz
+    fi
+
+fi
