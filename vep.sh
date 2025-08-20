@@ -36,6 +36,8 @@ if [ ! -f vep.sif ]; then
     singularity pull --name vep.sif docker://ensemblorg/ensembl-vep
 fi
 
+echo "REF_DIR is: $REF_DIR"
+
 if [ "$CACHE_BUILD" = "hg19/GRCh37" ]; then
     ASSEMBLY="GRCh37"
     if compgen -G "$REF_DIR/homo_sapiens/*GRCh37*" > /dev/null; then
@@ -53,6 +55,7 @@ elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
 fi
 
 # Run VEP on each VCF in $VCF_DIR
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 for vcf in $VCF_DIR/*.vcf; do
-    sbatch vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${vcf%.vcf}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
+    sbatch $SCRIPT_DIR/vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${vcf%.vcf}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
 done
