@@ -32,6 +32,6 @@ fi
 mkdir -p $TEMP_DIR/maf_files
 # Run the vcf2maf.pl on each vep.vcf file in the input directory through slurm
 for vcf in $VEP_VCF_DIR/*.vcf; do
-    sbatch --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $vcf -o $TEMP_DIR/maf_files/$(basename $vcf .vcf).maf -r $REF_FASTA
+    sbatch --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $vcf -o $TEMP_DIR/maf_files/$(basename $vcf .vep.vcf).maf -r $REF_FASTA
 done
 
