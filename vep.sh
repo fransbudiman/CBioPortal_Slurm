@@ -53,9 +53,16 @@ elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
     fi
 fi
 
-# Run VEP on each VCF in $VCF_DIR
-for vcf in $VCF_DIR/*.vcf; do
-    mkdir -p $SCRATCH/cbioportal_projects/logs
-    SAMPLE_NAME=$(basename ${vcf%.vcf})
-    sbatch --output=$SCRATCH/cbioportal_projects/logs/vep_%A.out $SCRIPT_DIR/vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
-done
+# run as job array
+FILE_NO=$(ls $VCF_DIR/*.vcf | wc -l)
+realpath $VCF_DIR/*.vcf > $VCF_DIR/vcf_files.txt
+
+sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
+
+# # Run VEP on each VCF in $VCF_DIR
+# for vcf in $VCF_DIR/*.vcf; do
+#     mkdir -p $SCRATCH/cbioportal_projects/logs
+#     mkdir -p $OUTPUT_DIR
+#     SAMPLE_NAME=$(basename ${vcf%.vcf})
+#     sbatch --output=$SCRATCH/cbioportal_projects/logs/vep_%A.out $SCRIPT_DIR/vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
+# done

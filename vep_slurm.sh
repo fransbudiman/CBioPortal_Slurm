@@ -5,9 +5,9 @@
 
 while getopts ":i:o:r:s:a:" opt; do
   case $opt in
-    i) VCF_FILE="$OPTARG"
+    i) VCF_LIST="$OPTARG"
     ;;
-    o) OUTPUT_FILE="$OPTARG"
+    o) OUTPUT_DIR="$OPTARG"
     ;;
     a) ASSEMBLY="$OPTARG"
     ;;
@@ -20,4 +20,7 @@ while getopts ":i:o:r:s:a:" opt; do
   esac
 done
 
-singularity exec --bind $SCRATCH:$SCRATCH vep.sif vep --dir $REF_DIR --cache --offline --format vcf --vcf --force_overwrite --input_file $VCF_FILE --output_file $OUTPUT_FILE --assembly $ASSEMBLY
+VCF=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $VCF_LIST)
+SAMPLE_NAME=$(basename $VCF .vcf)
+
+singularity exec --bind $SCRATCH:$SCRATCH vep.sif vep --dir $REF_DIR --cache --offline --format vcf --vcf --force_overwrite --input_file "$VCF" --output_file $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf --assembly $ASSEMBLY
