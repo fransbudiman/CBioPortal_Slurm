@@ -18,4 +18,7 @@ done
 module load perl/5.30.3
 module load samtools
 
-perl vcf2maf.pl --input-vcf $INPUT_VCF --output-maf $OUTPUT_MAF --ref-fasta $REF_FASTA --verbose --inhibit-vep
+SAMPLE_NAME=$(awk '/^#CHROM/ {print $10}' $INPUT_VCF)
+echo "Sample Name: $SAMPLE_NAME"
+
+perl vcf2maf.pl --verbose --inhibit-vep --input-vcf $INPUT_VCF --output-maf $OUTPUT_MAF --ref-fasta $REF_FASTA --tumor-id $SAMPLE_NAME
