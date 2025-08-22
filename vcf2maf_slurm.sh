@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=vcf2maf
-#SBATCH --time=00:10:00
+#SBATCH --time=00:15:00
 
 while getopts ":i:o:r:" opt; do
   case $opt in
