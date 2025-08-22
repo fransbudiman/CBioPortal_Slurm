@@ -24,3 +24,5 @@ VCF=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $VCF_LIST)
 SAMPLE_NAME=$(basename $VCF .vcf)
 
 singularity exec --bind $SCRATCH:$SCRATCH vep.sif vep --dir $REF_DIR --cache --offline --format vcf --vcf --force_overwrite --input_file "$VCF" --output_file $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf --assembly $ASSEMBLY
+
+echo "Finished processing $VCF, output saved to $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf"
