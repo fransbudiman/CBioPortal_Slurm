@@ -2,6 +2,8 @@
 
 #SBATCH --job-name=vep
 #SBATCH --time=00:15:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=6G
 
 while getopts ":i:o:r:s:a:" opt; do
   case $opt in
