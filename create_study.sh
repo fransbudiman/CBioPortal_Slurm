@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":i:n:d:m:c:" opt; do
+while getopts ":i:n:d:m:t:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
     ;;
@@ -34,7 +34,7 @@ python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutation_
 
 python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
 
-python clinicaldata_maker.py --input-csv "$TSV_FILE" --project-dir "$STUDY_DIR"
+python clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR"
 
 python cases_sequenced.py --project-dir "$STUDY_DIR"
 
