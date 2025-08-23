@@ -4,9 +4,9 @@
 
 while getopts ":i:o:r:" opt; do
   case $opt in
-    i) INPUT_VCF="$OPTARG"
+    i) VCF_LIST="$OPTARG"
     ;;
-    o) OUTPUT_MAF="$OPTARG"
+    o) OUTPUT_DIR="$OPTARG"
     ;;
     r) REF_FASTA="$OPTARG"
     ;;
@@ -18,7 +18,10 @@ done
 module load perl/5.30.3
 module load samtools
 
-SAMPLE_NAME=$(awk '/^#CHROM/ {print $10}' $INPUT_VCF)
+VCF=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $VCF_LIST)
+SAMPLE_NAME=$(basename $VCF .vep.vcf)
 echo "Sample Name: $SAMPLE_NAME"
 
-perl vcf2maf.pl --verbose --inhibit-vep --input-vcf $INPUT_VCF --output-maf $OUTPUT_MAF --ref-fasta $REF_FASTA --tumor-id $SAMPLE_NAME
+perl vcf2maf.pl --verbose --inhibit-vep --input-vcf $VCF --output-maf $OUTPUT_DIR/${SAMPLE_NAME}.maf --ref-fasta $REF_FASTA --tumor-id $SAMPLE_NAME
+
+echo "Finished processing $VCF, output saved to $OUTPUT_DIR/${SAMPLE_NAME}.maf"
