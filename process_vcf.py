@@ -17,7 +17,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 filename = os.path.basename(input_vcf)
 sample_name = filename.split('.')[0]
-output_vcf = os.path.join(output_dir, f"{sample_name}.processed.vcf")
+output_vcf = os.path.join(output_dir, f"{sample_name}.vcf")
 print("Sample name:", sample_name)
 
 file_in = open(input_vcf, 'r')

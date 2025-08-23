@@ -10,7 +10,7 @@ while getopts ":i:n:d:m:c:" opt; do
     ;;
     m) MAF_DIR="$OPTARG"
     ;;
-    c) CSV_FILE="$OPTARG"
+    t) TSV_FILE="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
@@ -32,9 +32,9 @@ TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 conda install pandas numpy
 python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutation_extended.txt
 
-python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --sample-csv "$CSV_FILE" --description "$STUDY_DESC"
+python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
 
-python clinicaldata_maker.py --input-csv "$CSV_FILE" --project-dir "$STUDY_DIR"
+python clinicaldata_maker.py --input-csv "$TSV_FILE" --project-dir "$STUDY_DIR"
 
 python cases_sequenced.py --project-dir "$STUDY_DIR"
 

@@ -3,7 +3,6 @@ import os
 
 parser = argparse.ArgumentParser(description='Process VCF file for MAF conversion.')
 parser.add_argument('--project-dir', required=True, help='Path to the project directory')
-parser.add_argument('--sample-csv', required=True, help='Path to the sample CSV file')
 parser.add_argument('--study-identifier', required=True, help='Study identifier')
 parser.add_argument('--name', required=True, help='Name of the study')
 parser.add_argument('--description', required=True, help='Description of the study')

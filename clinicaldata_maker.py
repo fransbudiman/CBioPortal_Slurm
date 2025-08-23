@@ -6,15 +6,15 @@ import os
 import pandas as pd
 
 parser = argparse.ArgumentParser(description='Generate clinical data files for CBioPortal.')
-parser.add_argument('--input-csv', required=True, help='Path to the input CSV file')
+parser.add_argument('--input-tsv', required=True, help='Path to the input TSV file')
 parser.add_argument('--project-dir', required=True, help='Path to the project directory')
 
 args = parser.parse_args()
-input_csv = args.input_csv
+input_tsv = args.input_tsv
 project_dir = args.project_dir
 
 output_file_path = os.path.join(project_dir, "data_clinical_sample.txt")
-df = pd.read_csv(input_csv, sep="\t")
+df = pd.read_csv(input_tsv, sep="\t")
 
 # Write required header to output file
 with open(output_file_path, "w") as f:
