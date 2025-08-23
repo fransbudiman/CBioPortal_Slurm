@@ -31,14 +31,6 @@ TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 
 mkdir -p $REF_DIR $RESULT_DIR $TOOLS_DIR $STUDY_DIR $TEMP_DIR
 
-# Process VCF files to change name from TM to SGT
-mkdir -p $TEMP_DIR/processed_vcf
-for vcf in $VCF_DIR/*.vcf; do
-    # Process each VCF file
-    echo "Processing $vcf..."
-    python process_vcf.py --input-vcf $vcf --output-dir $TEMP_DIR/processed_vcf
-done
-
 module load samtools
 
 if [ $REF_FASTA = "hg19" ]; then
