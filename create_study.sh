@@ -30,7 +30,7 @@ TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 
 # Merge MAF files
 conda install pandas numpy
-python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutation_extended.txt
+python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
 
 python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
 
