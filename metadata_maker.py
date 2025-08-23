@@ -9,7 +9,6 @@ parser.add_argument('--description', required=True, help='Description of the stu
 
 args = parser.parse_args()
 project_dir = args.project_dir
-sample_csv = args.sample_csv
 study_identifier = args.study_identifier
 name = args.name
 description = args.description
