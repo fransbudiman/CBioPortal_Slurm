@@ -1,12 +1,8 @@
 #!/bin/bash
 
-while getopts ":i:n:d:v:r:" opt; do
+while getopts ":i:v:r:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
-    ;;
-    n) STUDY_NAME="$OPTARG"
-    ;;
-    d) STUDY_DESC="$OPTARG"
     ;;
     v) VCF_DIR="$OPTARG"
     ;;
@@ -17,7 +13,7 @@ while getopts ":i:n:d:v:r:" opt; do
   esac
 done
 
-./setup.sh -i $STUDY_ID -n $STUDY_NAME -d $STUDY_DESC -v $VCF_DIR -r $REF_FASTA
+./setup.sh -i $STUDY_ID -r $REF_FASTA
 
 # Storing all FASTA references
 REF_DIR="$SCRATCH/cbioportal_projects/references"

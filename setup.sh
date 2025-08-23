@@ -1,14 +1,8 @@
 #!/bin/bash
 
-while getopts ":i:n:d:v:r:" opt; do
+while getopts ":i:r:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
-    ;;
-    n) STUDY_NAME="$OPTARG"
-    ;;
-    d) STUDY_DESC="$OPTARG"
-    ;;
-    v) VCF_DIR="$OPTARG"
     ;;
     r) REF_FASTA="$OPTARG"
     ;;
