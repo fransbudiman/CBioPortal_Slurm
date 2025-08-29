@@ -36,5 +36,5 @@ done
 
 
 mkdir -p $TEMP_DIR/vep_output
-./vep.sh -i $TEMP_DIR/processed_vcf -o $TEMP_DIR/vep_output -r $REF_DIR -s $STUDY_ID
-
+jid_vep=$(./vep.sh -i $TEMP_DIR/processed_vcf -o $TEMP_DIR/vep_output -r $REF_DIR -s $STUDY_ID | awk '/jid:/ {print $2}')
+echo "jid: $jid_vep"

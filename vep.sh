@@ -57,7 +57,8 @@ fi
 FILE_NO=$(ls $VCF_DIR/*.vcf | wc -l)
 ls $VCF_DIR/*.vcf > $VCF_DIR/vcf_files.txt
 
-sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
+jid=$(sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY | awk '{print $4}')
+echo "jid: $jid"
 
 # # Run VEP on each VCF in $VCF_DIR
 # for vcf in $VCF_DIR/*.vcf; do
