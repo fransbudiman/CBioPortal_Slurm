@@ -43,7 +43,9 @@ else
 fi
 
 jid_vep=$(./preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
+echo "Job ID for VEP: $jid_vep"
 
-jid_vcf2maf=$(sbatch --dependency=afterok:$jid_vep ./vcf2maf.sh -i "$VCF_DIR" -p "$STUDY_ID" -r "$REF_FILE" | awk '/jid:/ {print $2}')
+jid_vcf2maf=$(sbatch --dependency=afterok:$jid_vep ./vcf2maf.sh -- -i "$VCF_DIR" -p "$STUDY_ID" -r "$REF_FILE" | awk '/jid:/ {print $2}')
+echo "Job ID for VCF2MAF: $jid_vcf2maf"
 
-sbatch --dependency=afterok:$jid_vcf2maf ./create_study.sh -i "$MAF_DIR" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
+sbatch --dependency=afterok:$jid_vcf2maf ./create_study.sh -- -i "$MAF_DIR" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
