@@ -1,12 +1,16 @@
 #!/bin/bash
 
-while getopts ":i:p:r:" opt; do
+DEPENDENCY=""
+
+while getopts ":i:p:r:d:" opt; do
   case $opt in
     i) VEP_VCF_DIR="$OPTARG"
     ;;
     r) REF_FASTA="$OPTARG"
     ;;
     p) PROJECT_NAME="$OPTARG"
+    ;;
+    d) DEPENDENCY="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
@@ -35,8 +39,10 @@ mkdir -p $TEMP_DIR/maf_files
 # Submit array job instead
 FILE_NO=$(ls $VEP_VCF_DIR/*.vcf | wc -l)
 ls $VEP_VCF_DIR/*.vcf > $VEP_VCF_DIR/vcf_files.txt
-
-jid=$(sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A_%a.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $VEP_VCF_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
+if [ -n "$DEPENDENCY" ]; then
+    DEPENDENCY="--dependency=afterok:$DEPENDENCY"
+fi
+jid=$(sbatch $DEPENDENCY --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A_%a.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $VEP_VCF_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
 echo "jid: $jid"
 
 # # Run the vcf2maf.pl on each vep.vcf file in the input directory through slurm
