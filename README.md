@@ -35,7 +35,8 @@ cd cbioportal-docker-compose
 # Then, run the metaImport.py script with the appropriate parameters
 docker-compose run cbioportal metaImport.py -u http://cbioportal:8080 -s /path/to/study --html /path/to/report.html -v -o
 
-# Note that your study has to be copied into the cbioportal-docker-compose/study/ directory. This is because your local files are not accessible within the Docker container.
+# Note that your study has to be copied into the cbioportal-docker-compose/study/ directory.
+# This is because your local files are not accessible within the Docker container.
 ```
 - -u: URL of the cBioPortal instance
 - -s: Path to the study directory to import
