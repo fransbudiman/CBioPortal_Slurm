@@ -48,7 +48,9 @@ MAF_DIR="$SCRATCH/cbioportal_projects/results/${STUDY_ID}_temp/maf_files"
 jid_vep=$(./preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
 echo "Job ID for VEP: $jid_vep"
 
-jid_vcf2maf=$(./vcf2maf.sh -- -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_FILE" -d "$jid_vep" | awk '/jid:/ {print $2}')
-echo "Job ID for VCF2MAF: $jid_vcf2maf"
+sbatch --dependency=afterok:$jid_vep ./driver_2.sh -- -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_FILE" -m "$MAF_DIR" -n "$STUDY_NAME" -d "$STUDY_DESC" -t "$TSV_FILE"
 
-sbatch --dependency=afterok:$jid_vcf2maf ./create_study.sh -- -i "$MAF_DIR" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
+# jid_vcf2maf=$(sbatch --dependency=afterok:$jid_vep ./vcf2maf.sh -- -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_FILE" | awk '/jid:/ {print $2}')
+# echo "Job ID for VCF2MAF: $jid_vcf2maf"
+
+# sbatch --dependency=afterok:$jid_vcf2maf ./create_study.sh -- -i "$MAF_DIR" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
