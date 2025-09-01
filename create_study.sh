@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":i:n:d:m:t:" opt; do
+while getopts ":i:n:d:m:t:D:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
     ;;
@@ -11,6 +11,8 @@ while getopts ":i:n:d:m:t:" opt; do
     m) MAF_DIR="$OPTARG"
     ;;
     t) TSV_FILE="$OPTARG"
+    ;;
+    D) DEPENDENCY="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
@@ -30,11 +32,17 @@ TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 
 # Merge MAF files
 conda install pandas numpy
-python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
 
-python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
+if [ -n "$DEPENDENCY" ]; then
+  echo "Submitting job with dependency on job ID $DEPENDENCY"
+  DEPENDENCY_TEXT="--dependency=afterok:$DEPENDENCY"
+  sbatch $DEPENDENCY_TEXT ./create_study_slurm.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
+else
+  python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
+  python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
+  python clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR"
+  python cases_sequenced.py --project-dir "$STUDY_DIR"
+fi
 
-python clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR"
 
-python cases_sequenced.py --project-dir "$STUDY_DIR"
 

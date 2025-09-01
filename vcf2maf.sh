@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":i:p:r:d:" opt; do
+while getopts ":i:p:r:D:" opt; do
   case $opt in
     i) VEP_DIR="$OPTARG"
     ;;
@@ -8,7 +8,7 @@ while getopts ":i:p:r:d:" opt; do
     ;;
     p) PROJECT_NAME="$OPTARG"
     ;;
-    d) DEPENDENCY="$OPTARG"
+    D) DEPENDENCY="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
