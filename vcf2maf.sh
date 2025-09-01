@@ -8,6 +8,8 @@ while getopts ":i:p:r:d:" opt; do
     ;;
     p) PROJECT_NAME="$OPTARG"
     ;;
+    d) DEPENDENCY="$OPTARG"
+    ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
   esac
@@ -36,5 +38,9 @@ mkdir -p $TEMP_DIR/maf_files
 FILE_NO=$(ls $VEP_DIR/*.vcf | wc -l)
 ls $VEP_DIR/*.vcf > $VEP_DIR/vcf_files.txt
 
-jid=$(sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A_%a.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $VEP_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
+if [ -n "$DEPENDENCY" ]; then
+  DEPENDENCY_TEXT="--dependency=afterok:$DEPENDENCY"
+fi
+
+jid=$(sbatch $DEPENDENCY_TEXT --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A_%a.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $VEP_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
 echo "jid: $jid"
