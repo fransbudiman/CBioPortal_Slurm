@@ -53,4 +53,4 @@ echo "Job ID for VEP: $jid_vep"
 jid_vcf2maf=$(./vcf2maf.sh -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_FILE" -D "$jid_vep" | awk '/jid:/ {print $2}')
 echo "Job ID for VCF2MAF: $jid_vcf2maf"
 
-./create_study.sh -- -i "$MAF_DIR" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE" -D "$jid_vcf2maf"
+./create_study.sh -i "$MAF_DIR" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE" -D "$jid_vcf2maf"
