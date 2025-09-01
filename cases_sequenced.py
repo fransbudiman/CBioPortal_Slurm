@@ -34,6 +34,6 @@ with open(os.path.join(project_dir, "case_lists", "cases_sequenced.txt"), "w") a
     f.write(f"case_list_name: Sequenced samples\n")
     f.write(f"case_list_description: Sequenced samples ({num_samples} sample)\n")
     f.write(f"case_list_category: all_cases_with_mutation_data\n")
-    f.write(f"case_list_ids: {'\t'.join(case_list_ids)}\n")
+    f.write("case_list_ids: " + "\t".join(case_list_ids) + "\n")
 
 print(f"Cases sequenced file created at: {os.path.join(project_dir, 'case_lists', 'cases_sequenced.txt')}")
