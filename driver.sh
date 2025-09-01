@@ -17,7 +17,7 @@ while getopts "i:v:r:f:n:d:t:p" opt; do
   esac
 done
 
-if [ "$PROMPT_BOOL" -eq 1 ]; then
+if [ -n "$PROMPT_BOOL" ] && [ "$PROMPT_BOOL" -eq 1 ]; then
 # Interactive inputting of arguments
     echo "Enter Study ID:"
     read STUDY_ID

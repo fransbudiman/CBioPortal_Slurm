@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -x
+
 while getopts ":i:o:r:s:" opt; do
   case $opt in
     i) VCF_DIR="$OPTARG"
@@ -56,6 +58,7 @@ fi
 # run as job array
 FILE_NO=$(ls $VCF_DIR/*.vcf | wc -l)
 ls $VCF_DIR/*.vcf > $VCF_DIR/vcf_files.txt
+mkdir -p $OUTPUT_DIR
 for vcf in $VCF_DIR/*.vcf; do
     SAMPLE_NAME=$(basename ${vcf%.vcf})
     touch $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf
@@ -63,11 +66,3 @@ done
 
 jid=$(sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY | awk '{print $4}')
 echo "jid: $jid"
-
-# # Run VEP on each VCF in $VCF_DIR
-# for vcf in $VCF_DIR/*.vcf; do
-#     mkdir -p $SCRATCH/cbioportal_projects/logs
-#     mkdir -p $OUTPUT_DIR
-#     SAMPLE_NAME=$(basename ${vcf%.vcf})
-#     sbatch --output=$SCRATCH/cbioportal_projects/logs/vep_%A.out $SCRIPT_DIR/vep_slurm.sh -i $vcf -o $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY
-# done
