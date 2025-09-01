@@ -37,6 +37,7 @@ mkdir -p $TEMP_DIR/maf_files
 # Submit array job instead
 FILE_NO=$(ls $VEP_DIR/*.vcf | wc -l)
 ls $VEP_DIR/*.vcf > $VEP_DIR/vcf_files.txt
+echo "VEP_DIR = $VEP_DIR"
 
 if [ -n "$DEPENDENCY" ]; then
   DEPENDENCY_TEXT="--dependency=afterok:$DEPENDENCY"
