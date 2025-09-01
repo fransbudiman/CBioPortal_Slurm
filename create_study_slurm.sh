@@ -22,6 +22,12 @@ while getopts ":i:n:d:m:t:" opt; do
   esac
 done
 
+# Storing all result
+RESULT_DIR="$SCRATCH/cbioportal_projects/results"
+# Final project directory to upload to CBioPortal
+STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
+
+
 CONDA_VER=$(conda --version)
 echo "conda: $CONDA_VER"
 
