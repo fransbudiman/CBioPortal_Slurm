@@ -44,6 +44,8 @@ fi
 
 VEP_DIR="$SCRATCH/cbioportal_projects/results/${STUDY_ID}_temp/vep_output"
 MAF_DIR="$SCRATCH/cbioportal_projects/results/${STUDY_ID}_temp/maf_files"
+echo "VEP Directory: $VEP_DIR"
+echo "MAF Directory: $MAF_DIR"
 
 jid_vep=$(./preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
 echo "Job ID for VEP: $jid_vep"
