@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --nodes=1
 
-while getopts ":i:o:r:s:a:" opt; do
+while getopts ":i:o:r:s:a:f:" opt; do
   case $opt in
     i) VCF_LIST="$OPTARG"
     ;;

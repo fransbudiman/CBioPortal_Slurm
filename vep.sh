@@ -2,7 +2,7 @@
 
 set -x
 
-while getopts ":i:o:r:s:" opt; do
+while getopts ":i:o:r:s:f:" opt; do
   case $opt in
     i) VCF_DIR="$OPTARG"
     ;;
