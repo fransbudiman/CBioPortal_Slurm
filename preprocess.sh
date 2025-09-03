@@ -26,6 +26,14 @@ STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 # Temporary directory for intermediate files (delete after upload)
 TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 
+if [ $REF_FASTA = "hg19" ]; then
+    REF_FASTA_PATH="$REF_DIR/hg19.fa.gz"
+elif [ $REF_FASTA = "hg38" ]; then
+    REF_FASTA_PATH="$REF_DIR/hg38.fa.gz"
+else
+    REF_FASTA_PATH="$REF_FASTA"
+fi
+
 # Process VCF files to change name from TM to SGT
 mkdir -p $TEMP_DIR/processed_vcf
 for vcf in $VCF_DIR/*.vcf; do
@@ -36,5 +44,5 @@ done
 
 
 mkdir -p $TEMP_DIR/vep_output
-jid_vep=$(./vep.sh -i $TEMP_DIR/processed_vcf -o $TEMP_DIR/vep_output -r $REF_DIR -s $STUDY_ID | awk '/jid:/ {print $2}')
+jid_vep=$(./vep.sh -i $TEMP_DIR/processed_vcf -o $TEMP_DIR/vep_output -r $REF_DIR -s $STUDY_ID -f $REF_FASTA_PATH | awk '/jid:/ {print $2}')
 echo "jid: $jid_vep"

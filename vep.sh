@@ -12,6 +12,8 @@ while getopts ":i:o:r:s:" opt; do
     ;;
     s) STUDY_ID="$OPTARG"
     ;;
+    f) FASTA_FILE="$OPTARG"
+    ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
   esac
@@ -64,5 +66,5 @@ for vcf in $VCF_DIR/*.vcf; do
     touch $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf
 done
 
-jid=$(sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY | awk '{print $4}')
+jid=$(sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY -f $FASTA_FILE | awk '{print $4}')
 echo "jid: $jid"
