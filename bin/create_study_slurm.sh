@@ -23,10 +23,13 @@ while getopts ":i:n:d:m:t:" opt; do
 done
 
 # Storing all result
-RESULT_DIR="$SCRATCH/cbioportal_projects/results"
-# Final project directory to upload to CBioPortal
-STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
+# RESULT_DIR="$SCRATCH/cbioportal_projects/results"
+# # Final project directory to upload to CBioPortal
+# STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 
+source "${BASH_SOURCE%/*}/../config/paths.env"
+RESULT_DIR="$WORK_DIR/results"
+STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 
 CONDA_VER=$(conda --version)
 echo "conda: $CONDA_VER"

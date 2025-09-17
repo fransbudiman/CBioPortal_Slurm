@@ -19,16 +19,13 @@ while getopts ":i:n:d:m:t:D:" opt; do
   esac
 done
 
-# Storing all FASTA references
-REF_DIR="$SCRATCH/cbioportal_projects/references"
-# Storing all result
-RESULT_DIR="$SCRATCH/cbioportal_projects/results"
-# Storing all tools and scripts
-TOOLS_DIR="$SCRATCH/cbioportal_projects/tools"
-# Final project directory to upload to CBioPortal
+source "${BASH_SOURCE%/*}/../config/paths.env"
+
+REF_DIR="$WORK_DIR/references"
+RESULT_DIR="$WORK_DIR/results"
 STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
-# Temporary directory for intermediate files (delete after upload)
 TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
+TOOLS_DIR="$WORK_DIR/tools"
 
 # Merge MAF files
 conda install pandas numpy
