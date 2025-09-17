@@ -1,6 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=vcf2maf
 #SBATCH --time=00:15:00
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=10
 
 while getopts ":i:o:r:" opt; do
   case $opt in
