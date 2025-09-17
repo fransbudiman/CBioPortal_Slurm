@@ -2,6 +2,7 @@
 
 # This script will auto run the whole pipeline from vcf samples directory to cbioportal study directory
 
+source "${BASH_SOURCE%/*}/../config/paths.env"
 
 while getopts "i:v:r:f:n:d:t:p" opt; do
   case $opt in
@@ -42,10 +43,13 @@ else
     fi
 fi
 
-VEP_DIR="$SCRATCH/cbioportal_projects/results/${STUDY_ID}_temp/vep_output"
-MAF_DIR="$SCRATCH/cbioportal_projects/results/${STUDY_ID}_temp/maf_files"
+VEP_DIR="$WORK_DIR/results/${STUDY_ID}_temp/vep_output"
+MAF_DIR="$WORK_DIR/results/${STUDY_ID}_temp/maf_files"
 echo "VEP Directory: $VEP_DIR"
 echo "MAF Directory: $MAF_DIR"
+
+mkdir -p "$VEP_DIR"
+mkdir -p "$MAF_DIR"
 
 jid_vep=$(./preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
 echo "Job ID for VEP: $jid_vep"

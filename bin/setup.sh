@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Make sure necessary directories exist and download reference files if needed
+
 while getopts ":i:r:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
@@ -11,16 +13,12 @@ while getopts ":i:r:" opt; do
   esac
 done
 
-# Storing all FASTA references
-REF_DIR="$SCRATCH/cbioportal_projects/references"
-# Storing all result
-RESULT_DIR="$SCRATCH/cbioportal_projects/results"
-# Storing all tools and scripts
-TOOLS_DIR="$SCRATCH/cbioportal_projects/tools"
+source "${BASH_SOURCE%/*}/../config/paths.env"
 
-# Final project directory to upload to CBioPortal
+REF_DIR="$WORK_DIR/references"
+RESULT_DIR="$WORK_DIR/results"
+TOOLS_DIR="$WORK_DIR/tools"
 STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
-# Temporary directory for intermediate files (delete after upload)
 TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 
 mkdir -p $REF_DIR $RESULT_DIR $TOOLS_DIR $STUDY_DIR $TEMP_DIR
