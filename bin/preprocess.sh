@@ -13,18 +13,21 @@ while getopts ":i:v:r:" opt; do
   esac
 done
 
-./setup.sh -i $STUDY_ID -r $REF_FASTA
+source "${BASH_SOURCE%/*}/../config/paths.env"
+
+./$BIN_DIR/setup.sh -i $STUDY_ID -r $REF_FASTA
 
 # Storing all FASTA references
-REF_DIR="$SCRATCH/cbioportal_projects/references"
+REF_DIR="$WORK_DIR/references"
 # Storing all result
-RESULT_DIR="$SCRATCH/cbioportal_projects/results"
-# Storing all tools and scripts
-TOOLS_DIR="$SCRATCH/cbioportal_projects/tools"
+RESULT_DIR="$WORK_DIR/results"
+# Storing all tools
+TOOLS_DIR="$WORK_DIR/tools"
 # Final project directory to upload to CBioPortal
 STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 # Temporary directory for intermediate files (delete after upload)
 TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
+
 
 if [ $REF_FASTA = "hg19" ]; then
     REF_FASTA_PATH="$REF_DIR/hg19.fa.gz"

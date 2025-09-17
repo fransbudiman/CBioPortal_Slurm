@@ -15,18 +15,16 @@ while getopts ":i:p:r:D:" opt; do
   esac
 done
 
-# Storing all FASTA references
-REF_DIR="$SCRATCH/cbioportal_projects/references"
-# Storing all result
-RESULT_DIR="$SCRATCH/cbioportal_projects/results"
-# Temporary directory for intermediate files (delete after upload)
-TEMP_DIR="$RESULT_DIR/${PROJECT_NAME}_temp"
+source "${BASH_SOURCE%/*}/../config/paths.env"
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+REF_DIR="$WORK_DIR/references"
+RESULT_DIR="$WORK_DIR/results"
+TEMP_DIR="$RESULT_DIR/${PROJECT_NAME}_temp"
+TOOLS_DIR="$WORK_DIR/tools"
 
 # Download and extract vcf2maf scripts
-mkdir -p $SCRATCH/cbioportal_projects/tools
-cd $SCRATCH/cbioportal_projects/tools
+mkdir -p $TOOLS_DIR
+cd $TOOLS_DIR
 if [ ! -d "mskcc-vcf2maf*" ]; then
   export VCF2MAF_URL=`curl -sL https://api.github.com/repos/mskcc/vcf2maf/releases | grep -m1 tarball_url | cut -d\" -f4`
   curl -L -o mskcc-vcf2maf.tar.gz $VCF2MAF_URL; tar -zxf mskcc-vcf2maf.tar.gz; cd mskcc-vcf2maf-*
@@ -43,5 +41,5 @@ if [ -n "$DEPENDENCY" ]; then
   DEPENDENCY_TEXT="--dependency=afterok:$DEPENDENCY"
 fi
 
-jid=$(sbatch $DEPENDENCY_TEXT --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A_%a.out $SCRIPT_DIR/vcf2maf_slurm.sh -i $VEP_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
+jid=$(sbatch $DEPENDENCY_TEXT --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A_%a.out $BIN_DIR/vcf2maf_slurm.sh -i $VEP_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
 echo "jid: $jid"
