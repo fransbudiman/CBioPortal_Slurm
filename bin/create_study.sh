@@ -28,7 +28,8 @@ TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 TOOLS_DIR="$WORK_DIR/tools"
 
 # Merge MAF files
-conda install pandas numpy
+# conda install pandas numpy
+# should already be in the cbioportal env which is already activated in the setup script
 
 if [ -n "$DEPENDENCY" ]; then
   echo "Submitting job with dependency on job ID $DEPENDENCY"

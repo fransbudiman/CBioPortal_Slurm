@@ -51,3 +51,14 @@ elif [ $REF_FASTA = "hg38" ]; then
     fi
 
 fi
+
+if [ ! -d "$PROJECT_ROOT/env" ] || [ -z "$(ls -A $PROJECT_ROOT/env)" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv $PROJECT_ROOT/env
+    source $PROJECT_ROOT/env/bin/activate
+    pip install --upgrade pip
+    pip install pandas numpy
+else
+    echo "Virtual environment already exists."
+    source $PROJECT_ROOT/env/bin/activate
+fi
