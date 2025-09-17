@@ -15,7 +15,7 @@ done
 
 source "${BASH_SOURCE%/*}/../config/paths.env"
 
-./$BIN_DIR/setup.sh -i $STUDY_ID -r $REF_FASTA
+$BIN_DIR/setup.sh -i $STUDY_ID -r $REF_FASTA
 
 # Storing all FASTA references
 REF_DIR="$WORK_DIR/references"

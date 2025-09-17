@@ -52,10 +52,10 @@ REF_DIR="$WORK_DIR/references"
 mkdir -p "$VEP_DIR"
 mkdir -p "$MAF_DIR"
 
-jid_vep=$(./$BIN_DIR/preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
+jid_vep=$($BIN_DIR/preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
 echo "Job ID for VEP: $jid_vep"
 
-jid_vcf2maf=$(./$BIN_DIR/vcf2maf.sh -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_DIR/hg19.fa.gz.fai" -D "$jid_vep" | awk '/jid:/ {print $2}')
+jid_vcf2maf=$($BIN_DIR/vcf2maf.sh -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_DIR/hg19.fa.gz.fai" -D "$jid_vep" | awk '/jid:/ {print $2}')
 echo "Job ID for VCF2MAF: $jid_vcf2maf"
 
 ./$BIN_DIR/create_study.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE" -D "$jid_vcf2maf"
