@@ -27,7 +27,7 @@ done
 # # Final project directory to upload to CBioPortal
 # STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 
-source "${BASH_SOURCE%/*}/../config/paths.env"
+source "$PATHS_DIR/paths.env"
 RESULT_DIR="$WORK_DIR/results"
 STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 
