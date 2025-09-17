@@ -41,5 +41,8 @@ if [ -n "$DEPENDENCY" ]; then
   DEPENDENCY_TEXT="--dependency=afterok:$DEPENDENCY"
 fi
 
-jid=$(sbatch $DEPENDENCY_TEXT --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vcf2maf_%A_%a.out $BIN_DIR/vcf2maf_slurm.sh -i $VEP_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
+LOG_DIR="$PROJECT_ROOT/work/logs"
+mkdir -p $LOG_DIR
+
+jid=$(sbatch $DEPENDENCY_TEXT --export=PATHS_DIR=$PATHS_DIR --array=1-$FILE_NO --output=$LOG_DIR/vcf2maf_%A_%a.out $BIN_DIR/vcf2maf_slurm.sh -i $VEP_DIR/vcf_files.txt -o $TEMP_DIR/maf_files -r $REF_FASTA | awk '{print $4}')
 echo "jid: $jid"

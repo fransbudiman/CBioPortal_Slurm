@@ -19,6 +19,8 @@ while getopts ":i:o:r:s:f:" opt; do
   esac
 done
 
+source "${BASH_SOURCE%/*}/../config/paths.env"
+
 echo "Pick a genome build to cache:"
 echo "1) hg19/GRCh37"
 echo "2) hg38/GRCh38"
@@ -66,5 +68,8 @@ for vcf in $VCF_DIR/*.vcf; do
     touch $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf
 done
 
-jid=$(sbatch --array=1-$FILE_NO --output=$SCRATCH/cbioportal_projects/logs/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY -f $FASTA_FILE | awk '{print $4}')
+LOG_DIR="$PROJECT_ROOT/work/logs"
+mkdir -p $LOG_DIR
+
+jid=$(sbatch --export=PATHS_DIR=$PATHS_DIR --array=1-$FILE_NO --output=$LOG_DIR/vep_%A_%a.out $SCRIPT_DIR/vep_slurm.sh -i $VCF_DIR/vcf_files.txt -o $OUTPUT_DIR -r $REF_DIR -s $STUDY_ID -a $ASSEMBLY -f $FASTA_FILE | awk '{print $4}')
 echo "jid: $jid"
