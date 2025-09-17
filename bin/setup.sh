@@ -24,6 +24,7 @@ TEMP_DIR="$RESULT_DIR/${STUDY_ID}_temp"
 mkdir -p $REF_DIR $RESULT_DIR $TOOLS_DIR $STUDY_DIR $TEMP_DIR
 
 module load samtools
+module load htslib
 
 if [ $REF_FASTA = "hg19" ]; then
     if [ -f "$REF_DIR/hg19.fa.gz" ] && [ -f "$REF_DIR/hg19.fa.gz.fai" ]; then
