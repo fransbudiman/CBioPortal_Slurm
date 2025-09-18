@@ -17,9 +17,9 @@ while getopts ":i:o:r:" opt; do
   esac
 done
 
-module load perl/5.30.3
 module load samtools
 module load perl
+module load tabix
 
 VCF=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $VCF_LIST)
 SAMPLE_NAME=$(basename $VCF .vep.vcf)
