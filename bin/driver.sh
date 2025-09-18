@@ -4,7 +4,7 @@
 
 source "${BASH_SOURCE%/*}/../config/paths.env"
 
-while getopts "i:v:r:n:d:t:p" opt; do
+while getopts "i:v:r:n:d:t:p:f:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG" ;;
     v) VCF_DIR="$OPTARG" ;;
@@ -13,6 +13,7 @@ while getopts "i:v:r:n:d:t:p" opt; do
     d) STUDY_DESC="$OPTARG" ;;
     t) TSV_FILE="$OPTARG" ;;
     p) PROMPT_BOOL=1 ;;
+    f) FUSION_DIR="$OPTARG" ;;
     *) echo "Invalid option"; exit 1 ;;
   esac
 done
@@ -37,7 +38,7 @@ else
     # Check if all required arguments are provided
     if [ -z "$STUDY_ID" ] || [ -z "$VCF_DIR" ] || [ -z "$REF_TYPE" ] || [ -z "$STUDY_NAME" ] || [ -z "$STUDY_DESC" ] || [ -z "$TSV_FILE" ]; then
         echo "Error: Missing required arguments."
-        echo "Usage: ./driver.sh -i STUDY_ID -v VCF_DIR -r REF_TYPE -n STUDY_NAME -d STUDY_DESC -t TSV_FILE [-p]"
+        echo "Usage (minimal): ./driver.sh -i STUDY_ID -v VCF_DIR -r REF_TYPE -n STUDY_NAME -d STUDY_DESC -t TSV_FILE [-p]"
         exit 1
     fi
 fi
@@ -59,3 +60,10 @@ jid_vcf2maf=$($BIN_DIR/vcf2maf.sh -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_DIR/hg19
 echo "Job ID for VCF2MAF: $jid_vcf2maf"
 
 $BIN_DIR/create_study.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE" -D "$jid_vcf2maf"
+
+if [ -n $FUSION_DIR ]; then
+    echo "Creating fusion files"
+    $BIN_DIR/create_fusion.py -i "$FUSION_DIR" -o "$WORK_DIR/results/${STUDY_ID}_cbioportal" -s "$STUDY_ID"
+else
+    echo "No fusion directory provided, skipping fusion data creation."
+fi
