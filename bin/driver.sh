@@ -63,7 +63,7 @@ $BIN_DIR/create_study.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$M
 
 if [ -n $FUSION_DIR ]; then
     echo "Creating fusion files"
-    $BIN_DIR/create_fusion.py -i "$FUSION_DIR" -o "$WORK_DIR/results/${STUDY_ID}_cbioportal" -s "$STUDY_ID"
+    python $BIN_DIR/create_fusion.py -i "$FUSION_DIR" -o "$WORK_DIR/results/${STUDY_ID}_cbioportal" -s "$STUDY_ID"
 else
     echo "No fusion directory provided, skipping fusion data creation."
 fi
