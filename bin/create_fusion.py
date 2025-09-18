@@ -58,7 +58,8 @@ for input_file in os.listdir(input_directory):
         Sample_ID = filename.split('.')[0]
 
         fusion_df.append({
-            "Sample_ID": Sample_ID,
+            "Sample_Id": Sample_ID,
+            "SV_Status": "SOMATIC",
             "Site1_Hugo_Symbol": Site1_Hugo_Symbol,
             "Site2_Hugo_Symbol": Site2_Hugo_Symbol,
             "Site1_Ensembl_Transcript_Id": Site1_Ensembl_Transcript_Id,
