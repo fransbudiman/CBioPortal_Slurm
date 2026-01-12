@@ -42,10 +42,10 @@ mkdir -p $TEMP_DIR/processed_vcf
 for vcf in $VCF_DIR/*.vcf; do
     # Process each VCF file
     echo "Processing $vcf..."
-    python process_vcf.py --input-vcf $vcf --output-dir $TEMP_DIR/processed_vcf
+    python $BIN_DIR/process_vcf.py --input-vcf $vcf --output-dir $TEMP_DIR/processed_vcf
 done
 
 
 mkdir -p $TEMP_DIR/vep_output
-jid_vep=$(./vep.sh -i $TEMP_DIR/processed_vcf -o $TEMP_DIR/vep_output -r $REF_DIR -s $STUDY_ID -f $REF_FASTA_PATH | awk '/jid:/ {print $2}')
+jid_vep=$($BIN_DIR/vep.sh -i $TEMP_DIR/processed_vcf -o $TEMP_DIR/vep_output -r $REF_DIR -s $STUDY_ID -f $REF_FASTA_PATH | awk '/jid:/ {print $2}')
 echo "jid: $jid_vep"
