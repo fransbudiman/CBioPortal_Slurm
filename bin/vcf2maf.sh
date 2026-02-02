@@ -15,7 +15,24 @@ while getopts ":i:p:r:D:" opt; do
   esac
 done
 
-source "${BASH_SOURCE%/*}/../config/paths.env"
+# Calculate project root and load config
+PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}").." &> /dev/null && pwd)"
+CONFIG_FILE="$PROJECT_ROOT/config/config.yaml"
+
+# Parse YAML and set path variables
+eval $(python3 -c "
+import yaml
+with open('$CONFIG_FILE', 'r') as f:
+    config = yaml.safe_load(f)
+    for key in ['work_dir', 'bin_dir', 'config_dir']:
+        if config.get(key):
+            print(f'{key}={config[key]}')
+")
+
+# Build absolute paths
+WORK_DIR="$PROJECT_ROOT/$work_dir"
+BIN_DIR="$PROJECT_ROOT/$bin_dir"
+PATHS_DIR="$PROJECT_ROOT/$config_dir"
 
 REF_DIR="$WORK_DIR/references"
 RESULT_DIR="$WORK_DIR/results"

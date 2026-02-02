@@ -19,7 +19,23 @@ while getopts ":i:o:r:s:f:" opt; do
   esac
 done
 
-source "${BASH_SOURCE%/*}/../config/paths.env"
+# Calculate project root and load config
+PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}").." &> /dev/null && pwd)"
+CONFIG_FILE="$PROJECT_ROOT/config/config.yaml"
+
+# Parse YAML and set path variables
+eval $(python3 -c "
+import yaml
+with open('$CONFIG_FILE', 'r') as f:
+    config = yaml.safe_load(f)
+    for key in ['work_dir', 'env_dir']:
+        if config.get(key):
+            print(f'{key}={config[key]}')
+")
+
+# Build absolute paths
+WORK_DIR="$PROJECT_ROOT/$work_dir"
+ENV_DIR="$PROJECT_ROOT/$env_dir"
 
 echo "Pick a genome build to cache:"
 echo "1) hg19/GRCh37"

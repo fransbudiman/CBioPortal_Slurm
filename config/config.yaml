@@ -1,0 +1,38 @@
+# CBioPortal Pipeline Configuration
+# Edit these values for your study, then simply run: ./bin/driver.sh
+
+# Study Information
+study_id: "unique_id"
+study_name: "STUDY_NAME"
+study_description: "STUDY_DESCRIPTION"
+
+# Input Directories
+vcf_dir: "/scratch/frans/CBioPortal/mutation_data"
+fusion_dir: "/scratch/frans/CBioPortal/fusion_data"  # Optional, comment out or leave empty if not using
+rna_dir: "/scratch/frans/CBioPortal/rna_data"        # Optional, comment out or leave empty if not using
+
+# sample_info_tsv will be deprecated. Each data type directory should contain its own sample_info.tsv file.
+# sample_info_tsv: "/scratch/frans/CBioPortal/sample_info.tsv"
+
+# Reference Genome
+# Options: hg19 (GRCh37) or hg38 (GRCh38)
+reference_type: "hg19"
+
+
+
+
+# DO NOT EDIT BELOW THIS LINE
+# Project Structure (relative paths from project root)
+# These directories are automatically created if they don't exist
+work_dir: "work"
+bin_dir: "bin"
+env_dir: "env"
+config_dir: "config"
+lib_dir: "lib"
+
+# Subdirectories under work_dir
+references_dir: "work/references"
+results_dir: "work/results"
+tools_dir: "work/tools"
+logs_dir: "work/logs"
+

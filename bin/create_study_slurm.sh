@@ -22,12 +22,30 @@ while getopts ":i:n:d:m:t:" opt; do
   esac
 done
 
-# Storing all result
-# RESULT_DIR="$SCRATCH/cbioportal_projects/results"
-# # Final project directory to upload to CBioPortal
-# STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
+# Calculate project root and load config
+# Note: In SLURM jobs, PATHS_DIR is passed via --export
+if [ -z "$PATHS_DIR" ]; then
+  PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." &> /dev/null && pwd)"
+  PATHS_DIR="$PROJECT_ROOT/config"
+fi
 
-source "$PATHS_DIR/paths.env"
+CONFIG_FILE="$PATHS_DIR/config.yaml"
+
+# Parse YAML and set path variables
+eval $(python3 -c "
+import yaml
+with open('$CONFIG_FILE', 'r') as f:
+    config = yaml.safe_load(f)
+    for key in ['work_dir']:
+        if config.get(key):
+            print(f'{key}={config[key]}')
+")
+
+# Build absolute paths
+if [ -z "$PROJECT_ROOT" ]; then
+  PROJECT_ROOT="$(cd -- "$PATHS_DIR/.." &> /dev/null && pwd)"
+fi
+WORK_DIR="$PROJECT_ROOT/$work_dir"
 RESULT_DIR="$WORK_DIR/results"
 STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 
