@@ -51,7 +51,7 @@ TOOLS_DIR="$WORK_DIR/tools"
 if [ -n "$DEPENDENCY" ]; then
   echo "Submitting job with dependency on job ID $DEPENDENCY"
   DEPENDENCY_TEXT="--dependency=afterok:$DEPENDENCY"
-  sbatch --export=PATHS_DIR=$PATHS_DIR $DEPENDENCY_TEXT ./create_study_slurm.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
+  sbatch --export=PATHS_DIR=$PATHS_DIR $DEPENDENCY_TEXT $BIN_DIR/create_study_slurm.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
 else
   echo "No dependency, running script directly"
   python $BIN_DIR/merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
