@@ -28,6 +28,11 @@ if 'CANCER_TYPE_DETAILED' not in df.columns:
 if 'ONCOTREE_CODE' not in df.columns:
     df['ONCOTREE_CODE'] = 'TISSUE'
 
+# if column exists but has missing values, fill with stub
+df['CANCER_TYPE'] = df['CANCER_TYPE'].fillna('Tissue')
+df['CANCER_TYPE_DETAILED'] = df['CANCER_TYPE_DETAILED'].fillna('Tissue')
+df['ONCOTREE_CODE'] = df['ONCOTREE_CODE'].fillna('tissue')
+
 # Write the updated TSV
 df.to_csv(output_tsv, sep='\t', index=False)
 
