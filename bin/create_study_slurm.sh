@@ -47,6 +47,7 @@ if [ -z "$PROJECT_ROOT" ]; then
   PROJECT_ROOT="$(cd -- "$PATHS_DIR/.." &> /dev/null && pwd)"
 fi
 WORK_DIR="$PROJECT_ROOT/$work_dir"
+BIN_DIR="$PROJECT_ROOT/bin"
 RESULT_DIR="$WORK_DIR/results"
 STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 
@@ -55,9 +56,9 @@ echo "conda: $CONDA_VER"
 
 conda activate cbioportal
 
-python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
-python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
-python clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR"
-python cases_sequenced.py --project-dir "$STUDY_DIR"
+python $BIN_DIR/merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
+python $BIN_DIR/metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
+python $BIN_DIR/clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR"
+python $BIN_DIR/cases_sequenced.py --project-dir "$STUDY_DIR"
 
 echo "All scripts executed successfully."

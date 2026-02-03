@@ -54,10 +54,10 @@ if [ -n "$DEPENDENCY" ]; then
   sbatch --export=PATHS_DIR=$PATHS_DIR $DEPENDENCY_TEXT ./create_study_slurm.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE"
 else
   echo "No dependency, running script directly"
-  python merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
-  python metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
-  python clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR"
-  python cases_sequenced.py --project-dir "$STUDY_DIR"
+  python $BIN_DIR/merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
+  python $BIN_DIR/metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
+  python $BIN_DIR/clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR"
+  python $BIN_DIR/cases_sequenced.py --project-dir "$STUDY_DIR"
 fi
 
 
