@@ -16,7 +16,7 @@ while getopts ":i:p:r:D:" opt; do
 done
 
 # Calculate project root and load config
-PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}").." &> /dev/null && pwd)"
+PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." &> /dev/null && pwd)"
 CONFIG_FILE="$PROJECT_ROOT/config/config.yaml"
 
 # Parse YAML and set path variables
