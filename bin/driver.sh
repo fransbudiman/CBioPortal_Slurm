@@ -18,11 +18,12 @@ fi
 # Parse YAML and set variables
 eval $(python3 -c "
 import yaml
+import shlex
 with open('$CONFIG_FILE', 'r') as f:
     config = yaml.safe_load(f)
     for key, value in config.items():
         if value:
-            print(f'{key}={value}')
+            print(f'{key}={shlex.quote(str(value))}')
 ")
 
 # Build absolute paths from config

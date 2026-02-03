@@ -20,11 +20,12 @@ CONFIG_FILE="$PROJECT_ROOT/config/config.yaml"
 # Parse YAML and set path variables
 eval $(python3 -c "
 import yaml
+import shlex
 with open('$CONFIG_FILE', 'r') as f:
     config = yaml.safe_load(f)
     for key in ['work_dir']:
         if config.get(key):
-            print(f'{key}={config[key]}')
+            print(f'{key}={shlex.quote(str(config[key]))}')
 ")
 
 # Build absolute paths
