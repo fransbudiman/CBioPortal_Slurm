@@ -4,7 +4,7 @@
 # Configure your study in config/config.yaml, then simply run: ./bin/driver.sh
 
 # Calculate project root dynamically
-PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}").." &> /dev/null && pwd)"
+PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." &> /dev/null && pwd)"
 CONFIG_FILE="$PROJECT_ROOT/config/config.yaml"
 
 echo "Loading configuration from config.yaml..."
