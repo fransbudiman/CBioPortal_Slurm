@@ -78,11 +78,17 @@ mkdir -p "$MAF_DIR"
 
 # Merge all sample_info.tsv from each data type directory
 # to create a unified sample_info_unified.tsv for clinical data creation
-UNIFIED_TSV=$(python $BIN_DIR/merge_info.py)
+UNIFIED_TSV=$(python $BIN_DIR/merge_info.py) || {
+    echo "ERROR: Failed to merge sample_info.tsv files. Check error messages above."
+    exit 1
+}
 echo "Unified sample info TSV created at: $UNIFIED_TSV"
 
 # Implement oncotree mapping on unified TSV to get the ONCOTREE_CODE column
-python $BIN_DIR/oncotree_mapper.py --input-tsv "$UNIFIED_TSV" --output-tsv "$UNIFIED_TSV"
+python $BIN_DIR/oncotree_mapper.py --input-tsv "$UNIFIED_TSV" --output-tsv "$UNIFIED_TSV" || {
+    echo "ERROR: Failed to map oncotree codes."
+    exit 1
+}
 
 jid_vep=$($BIN_DIR/preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
 echo "Job ID for VEP: $jid_vep"

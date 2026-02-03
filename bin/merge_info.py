@@ -22,8 +22,10 @@ for data_dir in [rna_dir, fusion_dir, vcf_dir]:
             sample_info_files.append(sample_info_path)
 
 if not sample_info_files:
-    print("No sample_info.tsv files found in the specified data directories. Exiting.")
-    exit(0)
+    import sys
+    print("ERROR: No sample_info.tsv files found in the specified data directories.", file=sys.stderr)
+    print("Please ensure each data directory (vcf_dir, fusion_dir, rna_dir) contains a sample_info.tsv file.", file=sys.stderr)
+    sys.exit(1)
 
 # merge all sample_info.tsv files
 merged_df = pd.DataFrame()
