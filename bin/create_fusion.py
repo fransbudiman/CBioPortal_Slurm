@@ -13,8 +13,7 @@ input_directory = args.input_directory
 output_directory = args.output_directory
 study_id = args.study_id
 
-if not os.path.exists(output_directory):
-    os.makedirs(output_directory)
+os.makedirs(output_directory, exist_ok=True)
 
 fusion_df = []
 

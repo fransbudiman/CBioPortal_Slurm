@@ -54,6 +54,17 @@ echo "  Reference: $REF_TYPE"
 echo "  Study Name: $STUDY_NAME"
 echo "  RNA Directory: $RNA_DIR"
 echo "  Fusion Directory: $FUSION_DIR"
+
+# Safety check: prevent overwriting existing study directory
+STUDY_DIR="$WORK_DIR/results/${STUDY_ID}_cbioportal"
+if [ -d "$STUDY_DIR" ]; then
+    echo ""
+    echo "ERROR: Study directory already exists: $STUDY_DIR"
+    echo "Please choose a unique study_id in config.yaml or remove the existing directory."
+    echo ""
+    exit 1
+fi
+
 VEP_DIR="$WORK_DIR/results/${STUDY_ID}_temp/vep_output"
 MAF_DIR="$WORK_DIR/results/${STUDY_ID}_temp/maf_files"
 echo "VEP Directory: $VEP_DIR"
@@ -64,23 +75,36 @@ REF_DIR="$WORK_DIR/references"
 mkdir -p "$VEP_DIR"
 mkdir -p "$MAF_DIR"
 
+# Merge all sample_info.tsv from each data type directory
+# to create a unified sample_info_unified.tsv for clinical data creation
+UNIFIED_TSV=$(python $BIN_DIR/merge_info.py)
+echo "Unified sample info TSV created at: $UNIFIED_TSV"
+
+# Implement oncotree mapping on unified TSV to get the ONCOTREE_CODE column
+python $BIN_DIR/oncotree_mapper.py --input-tsv "$UNIFIED_TSV" --output-tsv "$UNIFIED_TSV"
+
 jid_vep=$($BIN_DIR/preprocess.sh -i "$STUDY_ID" -v "$VCF_DIR" -r "$REF_TYPE" | awk '/jid:/ {print $2}')
 echo "Job ID for VEP: $jid_vep"
 
 jid_vcf2maf=$($BIN_DIR/vcf2maf.sh -i "$VEP_DIR" -p "$STUDY_ID" -r "$REF_DIR/hg19.fa.gz" -D "$jid_vep" | awk '/jid:/ {print $2}')
 echo "Job ID for VCF2MAF: $jid_vcf2maf"
 
-# since we deprecated sample_info_tsv, we won't pass it to create_study.sh.
-# but we need new logic to merge all sample_info.tsv from each data type directory.
-# to create a unified sample_info_unified.tsv for clinical data creation.
-# TO IMPLEMENT AS SOON AS POSSIBLE!
+$BIN_DIR/create_study.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$UNIFIED_TSV" -D "$jid_vcf2maf"
 
-
-$BIN_DIR/create_study.sh -i "$STUDY_ID" -n "$STUDY_NAME" -d "$STUDY_DESC" -m "$MAF_DIR" -t "$TSV_FILE" -D "$jid_vcf2maf"
-
-if [ -n $FUSION_DIR ]; then
+# Check if fusion directory is provided
+# if so, create fusion files
+if [ -n "$FUSION_DIR" ]; then
     echo "Creating fusion files"
     python $BIN_DIR/create_fusion.py --input-directory "$FUSION_DIR" --output-directory "$WORK_DIR/results/${STUDY_ID}_cbioportal" --study-id "$STUDY_ID"
 else
     echo "No fusion directory provided, skipping fusion data creation."
+fi
+
+# Check if RNA directory is provided
+# if so, create RNA expression files (TO IMPLEMENT IMMEDIATELY)
+if [ -n "$RNA_DIR" ]; then
+    echo "Creating RNA expression files"
+    python $BIN_DIR/create_rna_expression.py 
+else
+    echo "No RNA directory provided, skipping RNA expression data creation."
 fi

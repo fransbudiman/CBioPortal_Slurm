@@ -35,3 +35,15 @@ for file_path in sample_info_files:
 merged_df.drop_duplicates(subset=['SAMPLE_ID'], inplace=True)
 
 # write the unified sample_info_unified.tsv
+# create temp directory for the study if it doesn't exist
+study_id = config.get('study_id', 'default_study')
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+work_dir = os.path.join(project_root, config.get('work_dir', 'work'))
+temp_dir = os.path.join(work_dir, 'results', f'{study_id}_temp')
+os.makedirs(temp_dir, exist_ok=True)
+
+metadata_output_path = os.path.abspath(os.path.join(temp_dir, 'sample_info_unified.tsv'))
+merged_df.to_csv(metadata_output_path, sep="\t", index=False)
+
+# Print the absolute path for use in driver.sh
+print(metadata_output_path)

@@ -18,6 +18,13 @@ rna_dir: "/scratch/frans/CBioPortal/rna_data"        # Optional, comment out or 
 # Options: hg19 (GRCh37) or hg38 (GRCh38)
 reference_type: "hg19"
 
+# Pipeline Control Flags
+# Set to false to skip processing if you're only adding new data types to existing study
+process_mutations: true  # Set to false to skip VCF->VEP->MAF->mutation files
+process_clinical: true   # Set to false to skip clinical data creation
+process_fusion: true     # Set to false to skip fusion data
+process_rna: true        # Set to false to skip RNA expression data
+
 
 
 
