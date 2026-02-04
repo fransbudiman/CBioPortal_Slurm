@@ -37,6 +37,7 @@ with open('$CONFIG_FILE', 'r') as f:
 # Build absolute paths
 WORK_DIR="$PROJECT_ROOT/$work_dir"
 BIN_DIR="$PROJECT_ROOT/$bin_dir"
+PATHS_DIR="$PROJECT_ROOT/$config_dir"
 
 REF_DIR="$WORK_DIR/references"
 RESULT_DIR="$WORK_DIR/results"
