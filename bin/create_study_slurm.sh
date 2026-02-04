@@ -51,10 +51,12 @@ BIN_DIR="$PROJECT_ROOT/bin"
 RESULT_DIR="$WORK_DIR/results"
 STUDY_DIR="$RESULT_DIR/${STUDY_ID}_cbioportal"
 
-CONDA_VER=$(conda --version)
-echo "conda: $CONDA_VER"
+# Load required modules on ComputeCanada
+module load python scipy-stack
 
-conda activate cbioportal
+# Check Python
+PYTHON_VER=$(python --version 2>&1)
+echo "Python: $PYTHON_VER"
 
 python $BIN_DIR/merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt
 python $BIN_DIR/metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC"
