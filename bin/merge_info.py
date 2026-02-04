@@ -31,10 +31,23 @@ if not sample_info_files:
 merged_df = pd.DataFrame()
 for file_path in sample_info_files:
     df = pd.read_csv(file_path, sep="\t")
+
     merged_df = pd.concat([merged_df, df], ignore_index=True)
 
 # remove duplicate entries based on SAMPLE_ID
 merged_df.drop_duplicates(subset=['SAMPLE_ID'], inplace=True)
+
+# Ensure all required columns for cBioPortal are present
+required_columns = ['PATIENT_ID', 'SAMPLE_ID', 'CANCER_TYPE', 'CANCER_TYPE_DETAILED', 'ONCOTREE_CODE']
+
+# Add PATIENT_ID if missing (derive from SAMPLE_ID)
+if 'PATIENT_ID' not in merged_df.columns:
+    merged_df['PATIENT_ID'] = merged_df['SAMPLE_ID']
+
+# Ensure column order with required columns first
+existing_cols = [col for col in required_columns if col in merged_df.columns]
+other_cols = [col for col in merged_df.columns if col not in required_columns]
+merged_df = merged_df[existing_cols + other_cols]
 
 # write the unified sample_info_unified.tsv
 # create temp directory for the study if it doesn't exist
