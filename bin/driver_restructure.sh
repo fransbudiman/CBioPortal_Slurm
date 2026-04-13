@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Calculate project root
-PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." &> /dev/null && pwd)"
+PROJECT_ROOT="/mnt/c/UNIFRANS/Work/JLE/CBioPortal/CBioPortal_Slurm"
 CONFIG_FILE="$PROJECT_ROOT/config/config.yaml"
 BIN_DIR="$PROJECT_ROOT/bin"
 
@@ -111,9 +111,9 @@ echo "You will be prompted for password..."
 scp -r "$RESTRUCTURED_DIR" "$REMOTE_HOST:$REMOTE_PARENT_DIR/"
 
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✓ Upload successful!${NC}"
+    echo -e "${GREEN} Upload successful!${NC}"
 else
-    echo -e "${RED}✗ Upload failed${NC}"
+    echo -e "${RED} Upload failed${NC}"
     exit 1
 fi
 
