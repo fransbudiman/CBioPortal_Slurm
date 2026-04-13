@@ -41,7 +41,9 @@ singularity exec --bind $SCRATCH:$SCRATCH vep.sif vep \
   --everything \
   --hgvs \
   --hgvsg \
+  --protein \
   --symbol \
-  --canonical
+  --canonical \
+  --numbers
 
 echo "Finished processing $VCF, output saved to $OUTPUT_DIR/${SAMPLE_NAME}.vep.vcf"
