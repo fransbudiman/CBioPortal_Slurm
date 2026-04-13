@@ -96,7 +96,10 @@ if [ -z "$REMOTE_PARENT_DIR" ]; then
 fi
 
 echo "Remote parent directory: $REMOTE_PARENT_DIR"
-echo "Will upload restructured data to: $REMOTE_HOST:$REMOTE_PARENT_DIR/"
+
+# Get the grandparent directory (one level up from REMOTE_PARENT_DIR)
+REMOTE_GRANDPARENT_DIR=$(dirname "$REMOTE_PARENT_DIR")
+echo "Will upload restructured data to: $REMOTE_HOST:$REMOTE_GRANDPARENT_DIR/"
 
 # Upload restructured directory
 echo ""
@@ -104,11 +107,12 @@ echo -e "${GREEN}Step 3: Uploading restructured data to Trillium...${NC}"
 
 RESTRUCTURED_DIR_NAME=$(basename "$RESTRUCTURED_DIR")
 echo "Uploading: $RESTRUCTURED_DIR"
-echo "Destination: $REMOTE_HOST:$REMOTE_PARENT_DIR/"
+echo "Destination: $REMOTE_HOST:$REMOTE_GRANDPARENT_DIR/$RESTRUCTURED_DIR_NAME/"
 echo "You will be prompted for password..."
+echo -e "${YELLOW}Note: If directory exists on remote, it will be overwritten${NC}"
 
 # Upload entire restructured directory using scp
-scp -r "$RESTRUCTURED_DIR" "$REMOTE_HOST:$REMOTE_PARENT_DIR/"
+scp -r "$RESTRUCTURED_DIR" "$REMOTE_HOST:$REMOTE_GRANDPARENT_DIR/"
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN} Upload successful!${NC}"
