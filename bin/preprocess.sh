@@ -57,6 +57,7 @@ fi
 
 # Process VCF files to change name from TM to SGT
 mkdir -p $TEMP_DIR/processed_vcf
+mkdir -p $TEMP_DIR/filtered_vcf
 
 # First try .vcf.gz files
 for vcf in $VCF_DIR/*.vcf.gz; do
@@ -65,8 +66,16 @@ for vcf in $VCF_DIR/*.vcf.gz; do
         # Decompress to temp location first
         temp_vcf="${vcf%.gz}"
         gunzip -c "$vcf" > "$temp_vcf"
-        python $BIN_DIR/process_vcf.py --input-vcf "$temp_vcf" --output-dir $TEMP_DIR/processed_vcf
-        rm -f "$temp_vcf"
+        
+        # Filter for PASS variants only using bcftools
+        sample_name=$(basename "$temp_vcf" .vcf)
+        filtered_vcf="$TEMP_DIR/filtered_vcf/${sample_name}.filtered.vcf"
+        echo "Filtering for PASS variants only..."
+        bcftools view -f PASS "$temp_vcf" > "$filtered_vcf"
+        
+        # Process filtered VCF
+        python $BIN_DIR/process_vcf.py --input-vcf "$filtered_vcf" --output-dir $TEMP_DIR/processed_vcf
+        rm -f "$temp_vcf" "$filtered_vcf"
     fi
 done
 
@@ -74,7 +83,16 @@ done
 for vcf in $VCF_DIR/*.vcf; do
     if [ -f "$vcf" ]; then
         echo "Processing uncompressed VCF: $vcf..."
-        python $BIN_DIR/process_vcf.py --input-vcf "$vcf" --output-dir $TEMP_DIR/processed_vcf
+        
+        # Filter for PASS variants only using bcftools
+        sample_name=$(basename "$vcf" .vcf)
+        filtered_vcf="$TEMP_DIR/filtered_vcf/${sample_name}.filtered.vcf"
+        echo "Filtering for PASS variants only..."
+        bcftools view -f PASS "$vcf" > "$filtered_vcf"
+        
+        # Process filtered VCF
+        python $BIN_DIR/process_vcf.py --input-vcf "$filtered_vcf" --output-dir $TEMP_DIR/processed_vcf
+        rm -f "$filtered_vcf"
     fi
 done
 
