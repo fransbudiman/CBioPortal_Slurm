@@ -44,11 +44,6 @@ required_columns = ['PATIENT_ID', 'SAMPLE_ID', 'CANCER_TYPE', 'CANCER_TYPE_DETAI
 if 'PATIENT_ID' not in merged_df.columns:
     merged_df['PATIENT_ID'] = merged_df['SAMPLE_ID']
 
-# Ensure column order with required columns first
-existing_cols = [col for col in required_columns if col in merged_df.columns]
-other_cols = [col for col in merged_df.columns if col not in required_columns]
-merged_df = merged_df[existing_cols + other_cols]
-
 # write the unified sample_info_unified.tsv
 # create temp directory for the study if it doesn't exist
 study_id = config.get('study_id', 'default_study')
