@@ -57,10 +57,25 @@ fi
 
 # Process VCF files to change name from TM to SGT
 mkdir -p $TEMP_DIR/processed_vcf
+
+# First try .vcf.gz files
+for vcf in $VCF_DIR/*.vcf.gz; do
+    if [ -f "$vcf" ]; then
+        echo "Processing compressed VCF: $vcf..."
+        # Decompress to temp location first
+        temp_vcf="${vcf%.gz}"
+        gunzip -c "$vcf" > "$temp_vcf"
+        python $BIN_DIR/process_vcf.py --input-vcf "$temp_vcf" --output-dir $TEMP_DIR/processed_vcf
+        rm -f "$temp_vcf"
+    fi
+done
+
+# Then try uncompressed .vcf files
 for vcf in $VCF_DIR/*.vcf; do
-    # Process each VCF file
-    echo "Processing $vcf..."
-    python $BIN_DIR/process_vcf.py --input-vcf $vcf --output-dir $TEMP_DIR/processed_vcf
+    if [ -f "$vcf" ]; then
+        echo "Processing uncompressed VCF: $vcf..."
+        python $BIN_DIR/process_vcf.py --input-vcf "$vcf" --output-dir $TEMP_DIR/processed_vcf
+    fi
 done
 
 
