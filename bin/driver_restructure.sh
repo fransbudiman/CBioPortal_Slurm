@@ -88,6 +88,8 @@ with open('$CONFIG_FILE', 'r') as f:
 ")
 
 REMOTE_HOST="frans@trillium.alliancecan.ca"
+REMOTE_PROJECT_DIR="/scratch/frans/CBioPortal/CBioPortal_Slurm"
+CONTROL_PATH="/tmp/ssh_control_%h_%p_%r"
 
 if [ -z "$REMOTE_PARENT_DIR" ]; then
     echo -e "${RED}ERROR: No remote directories configured in config.yaml${NC}"
@@ -101,6 +103,16 @@ echo "Remote parent directory: $REMOTE_PARENT_DIR"
 REMOTE_GRANDPARENT_DIR=$(dirname "$REMOTE_PARENT_DIR")
 echo "Will upload restructured data to: $REMOTE_HOST:$REMOTE_GRANDPARENT_DIR/"
 
+# Establish SSH ControlMaster connection
+echo ""
+echo -e "${GREEN}Establishing SSH connection (authenticate once)...${NC}"
+ssh -M -S "$CONTROL_PATH" -fN "$REMOTE_HOST"
+if [ $? -ne 0 ]; then
+    echo -e "${RED}ERROR: Failed to establish SSH connection${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ SSH connection established!${NC}"
+
 # Upload restructured directory
 echo ""
 echo -e "${GREEN}Step 3: Uploading restructured data to Trillium...${NC}"
@@ -108,30 +120,61 @@ echo -e "${GREEN}Step 3: Uploading restructured data to Trillium...${NC}"
 RESTRUCTURED_DIR_NAME=$(basename "$RESTRUCTURED_DIR")
 echo "Uploading: $RESTRUCTURED_DIR"
 echo "Destination: $REMOTE_HOST:$REMOTE_GRANDPARENT_DIR/$RESTRUCTURED_DIR_NAME/"
-echo "You will be prompted for password..."
-echo -e "${YELLOW}Note: If directory exists on remote, it will be overwritten${NC}"
 
-# Upload entire restructured directory using scp
-scp -r "$RESTRUCTURED_DIR" "$REMOTE_HOST:$REMOTE_GRANDPARENT_DIR/"
+# Upload entire restructured directory using scp with ControlMaster
+scp -o ControlPath="$CONTROL_PATH" -r "$RESTRUCTURED_DIR" "$REMOTE_HOST:$REMOTE_GRANDPARENT_DIR/"
 
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN} Upload successful!${NC}"
+    echo -e "${GREEN}✓ Upload successful!${NC}"
 else
-    echo -e "${RED} Upload failed${NC}"
+    echo -e "${RED}ERROR: Upload failed${NC}"
+    ssh -S "$CONTROL_PATH" -O exit "$REMOTE_HOST" 2>/dev/null
     exit 1
 fi
+
+# Submit SLURM job
+echo ""
+echo -e "${GREEN}Step 4: Submitting SLURM job on Trillium...${NC}"
+echo "Running: sbatch bin/driver.sh"
+
+JOB_OUTPUT=$(ssh -S "$CONTROL_PATH" "$REMOTE_HOST" "cd $REMOTE_PROJECT_DIR && sbatch bin/driver.sh")
+JOB_ID=$(echo "$JOB_OUTPUT" | grep -oP '\d+')
+
+if [ -z "$JOB_ID" ]; then
+    echo -e "${RED}ERROR: Failed to submit SLURM job${NC}"
+    echo "$JOB_OUTPUT"
+    ssh -S "$CONTROL_PATH" -O exit "$REMOTE_HOST" 2>/dev/null
+    exit 1
+fi
+
+echo -e "${GREEN}✓ SLURM job submitted! Job ID: $JOB_ID${NC}"
+
+# Verify job is in queue
+echo "Verifying job is queued..."
+QUEUE_CHECK=$(ssh -S "$CONTROL_PATH" "$REMOTE_HOST" "squeue -j $JOB_ID 2>/dev/null")
+
+if echo "$QUEUE_CHECK" | grep -q "$JOB_ID"; then
+    echo -e "${GREEN}✓ Job $JOB_ID is in the queue${NC}"
+else
+    echo -e "${YELLOW}Warning: Job $JOB_ID not found in queue (may have already started/finished)${NC}"
+fi
+
+# Close SSH ControlMaster
+echo ""
+echo "Closing SSH connection..."
+ssh -S "$CONTROL_PATH" -O exit "$REMOTE_HOST" 2>/dev/null
 
 # Summary
 echo ""
 echo "========================================"
-echo -e "${GREEN}UPLOAD COMPLETE${NC}"
+echo -e "${GREEN}UPLOAD & SUBMISSION COMPLETE${NC}"
 echo "========================================"
 echo "Local restructured directory: $RESTRUCTURED_DIR"
 echo "Remote host: $REMOTE_HOST"
+echo "SLURM Job ID: $JOB_ID"
 echo ""
 echo "Next steps:"
-echo "  1. SSH to Trillium: ssh $REMOTE_HOST"
-echo "  2. Navigate to CBioPortal_Slurm directory"
-echo "  3. Update config.yaml study_id and study_name"
-echo "  4. Run: ./bin/driver.sh"
+echo "  1. Monitor job: ssh $REMOTE_HOST 'squeue -u frans'"
+echo "  2. Check logs: ssh $REMOTE_HOST 'cat $REMOTE_PROJECT_DIR/slurm-$JOB_ID.out'"
+echo "  3. Download results when complete: ./bin/driver_download_import.sh"
 echo "========================================"
