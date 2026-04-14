@@ -132,31 +132,35 @@ else
     exit 1
 fi
 
-# Submit SLURM job
+# Run driver script
 echo ""
-echo -e "${GREEN}Step 4: Submitting SLURM job on Trillium...${NC}"
-echo "Running: sbatch bin/driver.sh"
+echo -e "${GREEN}Step 4: Running driver.sh on Trillium...${NC}"
+echo "Executing: ./bin/driver.sh"
+echo -e "${YELLOW}This will submit SLURM jobs and may take a moment...${NC}"
 
-JOB_OUTPUT=$(ssh -S "$CONTROL_PATH" "$REMOTE_HOST" "cd $REMOTE_PROJECT_DIR && sbatch bin/driver.sh")
-JOB_ID=$(echo "$JOB_OUTPUT" | grep -oP '\d+')
+ssh -S "$CONTROL_PATH" "$REMOTE_HOST" "cd $REMOTE_PROJECT_DIR && ./bin/driver.sh"
 
-if [ -z "$JOB_ID" ]; then
-    echo -e "${RED}ERROR: Failed to submit SLURM job${NC}"
-    echo "$JOB_OUTPUT"
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✓ Driver script completed successfully!${NC}"
+else
+    echo -e "${RED}ERROR: Driver script failed${NC}"
     ssh -S "$CONTROL_PATH" -O exit "$REMOTE_HOST" 2>/dev/null
     exit 1
 fi
 
-echo -e "${GREEN}✓ SLURM job submitted! Job ID: $JOB_ID${NC}"
+# Verify SLURM jobs were submitted
+echo ""
+echo "Waiting 20 seconds for jobs to be queued..."
+sleep 20
 
-# Verify job is in queue
-echo "Verifying job is queued..."
-QUEUE_CHECK=$(ssh -S "$CONTROL_PATH" "$REMOTE_HOST" "squeue -j $JOB_ID 2>/dev/null")
+echo -e "${GREEN}Step 5: Checking submitted SLURM jobs...${NC}"
+JOB_LIST=$(ssh -S "$CONTROL_PATH" "$REMOTE_HOST" "squeue -u frans --format='%.18i %.50j %.8T %.10M %.9l'")
 
-if echo "$QUEUE_CHECK" | grep -q "$JOB_ID"; then
-    echo -e "${GREEN}✓ Job $JOB_ID is in the queue${NC}"
+if [ -z "$JOB_LIST" ] || [ $(echo "$JOB_LIST" | wc -l) -le 1 ]; then
+    echo -e "${YELLOW}WARNING: No jobs found in queue. Jobs may have already completed or failed to submit.${NC}"
 else
-    echo -e "${YELLOW}Warning: Job $JOB_ID not found in queue (may have already started/finished)${NC}"
+    echo -e "${GREEN}✓ Active jobs:${NC}"
+    echo "$JOB_LIST"
 fi
 
 # Close SSH ControlMaster
@@ -167,14 +171,13 @@ ssh -S "$CONTROL_PATH" -O exit "$REMOTE_HOST" 2>/dev/null
 # Summary
 echo ""
 echo "========================================"
-echo -e "${GREEN}UPLOAD & SUBMISSION COMPLETE${NC}"
+echo -e "${GREEN}PIPELINE EXECUTION COMPLETE${NC}"
 echo "========================================"
 echo "Local restructured directory: $RESTRUCTURED_DIR"
 echo "Remote host: $REMOTE_HOST"
-echo "SLURM Job ID: $JOB_ID"
 echo ""
 echo "Next steps:"
-echo "  1. Monitor job: ssh $REMOTE_HOST 'squeue -u frans'"
-echo "  2. Check logs: ssh $REMOTE_HOST 'cat $REMOTE_PROJECT_DIR/slurm-$JOB_ID.out'"
+echo "  1. Monitor SLURM jobs: ssh $REMOTE_HOST 'squeue -u frans'"
+echo "  2. Check logs on Trillium in: $REMOTE_PROJECT_DIR/"
 echo "  3. Download results when complete: ./bin/driver_download_import.sh"
 echo "========================================"
