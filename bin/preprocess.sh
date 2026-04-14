@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load required modules
+module load bcftools/1.22
+
 while getopts ":i:v:r:" opt; do
   case $opt in
     i) STUDY_ID="$OPTARG"
