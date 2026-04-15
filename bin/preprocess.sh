@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Load required modules
+# Load required modules for bcftools
+module load StdEnv/2023
+module load gcc/12.3
 module load bcftools/1.22
 
 while getopts ":i:v:r:" opt; do
