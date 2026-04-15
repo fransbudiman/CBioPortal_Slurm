@@ -129,9 +129,9 @@ WARNING_LOG="$WARNING_DIR/warning_${LOG_DATE}.log"
 echo ""
 echo -e "${GREEN}Step 4: Importing study to cBioPortal...${NC}"
 echo "Study: /study/${STUDY_ID}_cbioportal"
-echo "Warning log: $WARNING_LOG"
 
-# Run metaImport and capture output
+# Run metaImport and capture output (temporarily disable exit on error)
+set +e
 IMPORT_OUTPUT=$(docker compose run --rm cbioportal \
   metaImport.py \
     -u http://cbioportal:8080 \
@@ -139,9 +139,11 @@ IMPORT_OUTPUT=$(docker compose run --rm cbioportal \
     -o 2>&1)
 
 IMPORT_EXIT_CODE=$?
+set -e
 
 # Save full output to log file
 echo "$IMPORT_OUTPUT" > "$WARNING_LOG"
+echo "Warning log saved to: $WARNING_LOG"
 
 # Check if import was successful
 echo ""
