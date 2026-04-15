@@ -19,7 +19,9 @@ with open(os.path.join(project_dir, "meta_study.txt"), 'r') as meta_file:
 stable_id = study_id + "_" + "sequenced"
 
 df = pd.read_csv(os.path.join(project_dir, "data_mutations_extended.txt"), sep="\t", comment='#')
-case_list_ids = df["Tumor_Sample_Barcode"].drop_duplicates().tolist()
+# Filter out empty or NA sample IDs
+case_list_ids = df["Tumor_Sample_Barcode"].dropna().drop_duplicates().tolist()
+case_list_ids = [x for x in case_list_ids if str(x).strip() != '']
 num_samples = len(case_list_ids)
 
 print(f"Study ID: {study_id}")
