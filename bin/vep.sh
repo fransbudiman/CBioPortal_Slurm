@@ -1,7 +1,5 @@
 #! /bin/bash
 
-set -x
-
 while getopts ":i:o:r:s:f:" opt; do
   case $opt in
     i) VCF_DIR="$OPTARG"
@@ -75,6 +73,37 @@ elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
         singularity exec --bind $REF_DIR:$REF_DIR vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh38
     fi
 fi
+
+echo "=========================================="
+echo "VEP Input Verification"
+echo "=========================================="
+echo "Input VCF directory: $VCF_DIR"
+
+# Verify we're using filtered/processed VCFs, not original raw data
+if [[ "$VCF_DIR" == *"/processed_vcf"* ]]; then
+    echo "VERIFIED: Using processed VCF directory (filtered data)"
+else
+    echo "WARNING: Input directory does not appear to be processed_vcf"
+    echo "Expected path to contain 'processed_vcf', got: $VCF_DIR"
+fi
+
+# Quick check: verify VCFs contain only PASS variants
+FIRST_VCF=$(ls $VCF_DIR/*.vcf 2>/dev/null | head -1)
+if [ -f "$FIRST_VCF" ]; then
+    NON_PASS=$(grep -v "^#" "$FIRST_VCF" | cut -f7 | grep -v "PASS" | wc -l)
+    TOTAL=$(grep -v "^#" "$FIRST_VCF" | wc -l)
+    echo "Sample check on $(basename $FIRST_VCF):"
+    echo "  Total variants: $TOTAL"
+    echo "  Non-PASS variants: $NON_PASS"
+    if [ "$NON_PASS" -gt 0 ]; then
+        echo "  ERROR: Non-PASS variants detected in input VCFs!"
+        echo "  VEP should only process PASS-filtered variants."
+        exit 1
+    else
+        echo "  VERIFIED: All variants have PASS filter"
+    fi
+fi
+echo "=========================================="
 
 # run as job array
 FILE_NO=$(ls $VCF_DIR/*.vcf | wc -l)

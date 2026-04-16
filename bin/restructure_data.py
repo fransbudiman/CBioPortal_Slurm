@@ -66,9 +66,17 @@ def restructure_data(input_dir):
         print(f"Error: '{input_dir}' is not a directory")
         sys.exit(1)
     
-    # Create restructured directory
+    # Create restructured directory (remove if exists to start fresh)
     dir_name = input_path.name
     restructured_dir = input_path.parent / f"{dir_name}_restructured"
+    
+    # Remove existing restructured directory to avoid conflicts
+    if restructured_dir.exists():
+        print(f"WARNING: Restructured directory already exists: {restructured_dir}")
+        print("Removing existing directory to start fresh...")
+        shutil.rmtree(restructured_dir)
+        print("Removed.")
+
     
     # Create subdirectories
     mutation_dir = restructured_dir / "mutation_data"

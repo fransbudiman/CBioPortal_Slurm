@@ -61,8 +61,14 @@ else
 fi
 
 # Process VCF files to change name from TM to SGT
+# Clean up existing processed files to ensure we only use newly filtered data
+rm -rf $TEMP_DIR/processed_vcf $TEMP_DIR/filtered_vcf
 mkdir -p $TEMP_DIR/processed_vcf
 mkdir -p $TEMP_DIR/filtered_vcf
+
+echo "=========================================="
+echo "Starting PASS variant filtering with bcftools"
+echo "=========================================="
 
 # First try .vcf.gz files
 for vcf in $VCF_DIR/*.vcf.gz; do
@@ -77,6 +83,31 @@ for vcf in $VCF_DIR/*.vcf.gz; do
         filtered_vcf="$TEMP_DIR/filtered_vcf/${sample_name}.filtered.vcf"
         echo "Filtering for PASS variants only..."
         bcftools view -f PASS "$temp_vcf" > "$filtered_vcf"
+        
+        # Verify filtered VCF was created and has content
+        if [ ! -f "$filtered_vcf" ]; then
+            echo "ERROR: Filtered VCF not created: $filtered_vcf"
+            rm -f "$temp_vcf"
+            continue
+        fi
+        
+        variant_count=$(grep -v "^#" "$filtered_vcf" | wc -l)
+        echo "  → Filtered to $variant_count PASS variants"
+        
+        # Verify no non-PASS variants remain
+        non_pass_count=$(grep -v "^#" "$filtered_vcf" | cut -f7 | grep -v "PASS" | wc -l)
+        if [ "$non_pass_count" -gt 0 ]; then
+            echo "  ERROR: Found $non_pass_count non-PASS variants after filtering!"
+            echo "  bcftools filtering failed. Aborting."
+            rm -f "$temp_vcf" "$filtered_vcf"
+            exit 1
+        else
+            echo "  VERIFIED: All variants have PASS filter"
+        fi
+        
+        if [ "$variant_count" -eq 0 ]; then
+            echo "  WARNING: No PASS variants found in $vcf"
+        fi
         
         # Process filtered VCF
         python $BIN_DIR/process_vcf.py --input-vcf "$filtered_vcf" --output-dir $TEMP_DIR/processed_vcf
@@ -94,6 +125,30 @@ for vcf in $VCF_DIR/*.vcf; do
         filtered_vcf="$TEMP_DIR/filtered_vcf/${sample_name}.filtered.vcf"
         echo "Filtering for PASS variants only..."
         bcftools view -f PASS "$vcf" > "$filtered_vcf"
+        
+        # Verify filtered VCF was created and has content
+        if [ ! -f "$filtered_vcf" ]; then
+            echo "ERROR: Filtered VCF not created: $filtered_vcf"
+            continue
+        fi
+        
+        variant_count=$(grep -v "^#" "$filtered_vcf" | wc -l)
+        echo "  → Filtered to $variant_count PASS variants"
+        
+        # Verify no non-PASS variants remain
+        non_pass_count=$(grep -v "^#" "$filtered_vcf" | cut -f7 | grep -v "PASS" | wc -l)
+        if [ "$non_pass_count" -gt 0 ]; then
+            echo "  ERROR: Found $non_pass_count non-PASS variants after filtering!"
+            echo "  bcftools filtering failed. Aborting."
+            rm -f "$filtered_vcf"
+            exit 1
+        else
+            echo "  VERIFIED: All variants have PASS filter"
+        fi
+        
+        if [ "$variant_count" -eq 0 ]; then
+            echo "  WARNING: No PASS variants found in $vcf"
+        fi
         
         # Process filtered VCF
         python $BIN_DIR/process_vcf.py --input-vcf "$filtered_vcf" --output-dir $TEMP_DIR/processed_vcf
