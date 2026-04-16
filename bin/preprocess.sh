@@ -66,14 +66,14 @@ rm -rf $TEMP_DIR/processed_vcf $TEMP_DIR/filtered_vcf
 mkdir -p $TEMP_DIR/processed_vcf
 mkdir -p $TEMP_DIR/filtered_vcf
 
-echo "=========================================="
-echo "Starting PASS variant filtering with bcftools"
-echo "=========================================="
+echo "=========================================="  >&2
+echo "Starting PASS variant filtering with bcftools" >&2
+echo "==========================================" >&2
 
 # First try .vcf.gz files
 for vcf in $VCF_DIR/*.vcf.gz; do
     if [ -f "$vcf" ]; then
-        echo "Processing compressed VCF: $vcf..."
+        echo "Processing compressed VCF: $vcf..." >&2
         # Decompress to temp location first
         temp_vcf="${vcf%.gz}"
         gunzip -c "$vcf" > "$temp_vcf"
@@ -81,32 +81,32 @@ for vcf in $VCF_DIR/*.vcf.gz; do
         # Filter for PASS variants only using bcftools
         sample_name=$(basename "$temp_vcf" .vcf)
         filtered_vcf="$TEMP_DIR/filtered_vcf/${sample_name}.filtered.vcf"
-        echo "Filtering for PASS variants only..."
+        echo "Filtering for PASS variants only..." >&2
         bcftools view -f PASS "$temp_vcf" > "$filtered_vcf"
         
         # Verify filtered VCF was created and has content
         if [ ! -f "$filtered_vcf" ]; then
-            echo "ERROR: Filtered VCF not created: $filtered_vcf"
+            echo "ERROR: Filtered VCF not created: $filtered_vcf" >&2
             rm -f "$temp_vcf"
             continue
         fi
         
         variant_count=$(grep -v "^#" "$filtered_vcf" | wc -l)
-        echo "  → Filtered to $variant_count PASS variants"
+        echo "  → Filtered to $variant_count PASS variants" >&2
         
         # Verify no non-PASS variants remain
         non_pass_count=$(grep -v "^#" "$filtered_vcf" | cut -f7 | grep -v "PASS" | wc -l)
         if [ "$non_pass_count" -gt 0 ]; then
-            echo "  ERROR: Found $non_pass_count non-PASS variants after filtering!"
-            echo "  bcftools filtering failed. Aborting."
+            echo "  ERROR: Found $non_pass_count non-PASS variants after filtering!" >&2
+            echo "  bcftools filtering failed. Aborting." >&2
             rm -f "$temp_vcf" "$filtered_vcf"
             exit 1
         else
-            echo "  VERIFIED: All variants have PASS filter"
+            echo "  VERIFIED: All variants have PASS filter" >&2
         fi
         
         if [ "$variant_count" -eq 0 ]; then
-            echo "  WARNING: No PASS variants found in $vcf"
+            echo "  WARNING: No PASS variants found in $vcf" >&2
         fi
         
         # Process filtered VCF
@@ -118,36 +118,36 @@ done
 # Then try uncompressed .vcf files
 for vcf in $VCF_DIR/*.vcf; do
     if [ -f "$vcf" ]; then
-        echo "Processing uncompressed VCF: $vcf..."
+        echo "Processing uncompressed VCF: $vcf..." >&2
         
         # Filter for PASS variants only using bcftools
         sample_name=$(basename "$vcf" .vcf)
         filtered_vcf="$TEMP_DIR/filtered_vcf/${sample_name}.filtered.vcf"
-        echo "Filtering for PASS variants only..."
+        echo "Filtering for PASS variants only..." >&2
         bcftools view -f PASS "$vcf" > "$filtered_vcf"
         
         # Verify filtered VCF was created and has content
         if [ ! -f "$filtered_vcf" ]; then
-            echo "ERROR: Filtered VCF not created: $filtered_vcf"
+            echo "ERROR: Filtered VCF not created: $filtered_vcf" >&2
             continue
         fi
         
         variant_count=$(grep -v "^#" "$filtered_vcf" | wc -l)
-        echo "  → Filtered to $variant_count PASS variants"
+        echo "  → Filtered to $variant_count PASS variants" >&2
         
         # Verify no non-PASS variants remain
         non_pass_count=$(grep -v "^#" "$filtered_vcf" | cut -f7 | grep -v "PASS" | wc -l)
         if [ "$non_pass_count" -gt 0 ]; then
-            echo "  ERROR: Found $non_pass_count non-PASS variants after filtering!"
-            echo "  bcftools filtering failed. Aborting."
+            echo "  ERROR: Found $non_pass_count non-PASS variants after filtering!" >&2
+            echo "  bcftools filtering failed. Aborting." >&2
             rm -f "$filtered_vcf"
             exit 1
         else
-            echo "  VERIFIED: All variants have PASS filter"
+            echo "  VERIFIED: All variants have PASS filter" >&2
         fi
         
         if [ "$variant_count" -eq 0 ]; then
-            echo "  WARNING: No PASS variants found in $vcf"
+            echo "  WARNING: No PASS variants found in $vcf" >&2
         fi
         
         # Process filtered VCF
