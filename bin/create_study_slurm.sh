@@ -61,6 +61,6 @@ echo "Python: $PYTHON_VER"
 python $BIN_DIR/merge_maf.py --input-dir $MAF_DIR --output-file $STUDY_DIR/data_mutations_extended.txt || { echo "ERROR: merge_maf.py failed"; exit 1; }
 python $BIN_DIR/metadata_maker.py --study-identifier "$STUDY_ID" --name "$STUDY_NAME" --project-dir "$STUDY_DIR" --description "$STUDY_DESC" || { echo "ERROR: metadata_maker.py failed"; exit 1; }
 python $BIN_DIR/clinicaldata_maker.py --input-tsv "$TSV_FILE" --project-dir "$STUDY_DIR" || { echo "ERROR: clinicaldata_maker.py failed"; exit 1; }
-python $BIN_DIR/cases_sequenced.py --project-dir "$STUDY_DIR" || { echo "ERROR: cases_sequenced.py failed"; exit 1; }
+python $BIN_DIR/create_case_lists.py --project-dir "$STUDY_DIR" || { echo "ERROR: create_case_lists.py failed"; exit 1; }
 
 echo "All scripts executed successfully."
