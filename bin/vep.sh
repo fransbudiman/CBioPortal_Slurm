@@ -36,20 +36,10 @@ with open('$CONFIG_FILE', 'r') as f:
 WORK_DIR="$PROJECT_ROOT/$work_dir"
 ENV_DIR="$PROJECT_ROOT/$env_dir"
 
-echo "Pick a genome build to cache:"
-echo "1) hg19/GRCh37"
-echo "2) hg38/GRCh38"
-read -p "Enter choice [1 or 2]: " choice
-
-case $choice in
-  1) CACHE_BUILD="hg19/GRCh37"
-     ;;
-  2) CACHE_BUILD="hg38/GRCh38"
-     ;;
-  *) echo "Invalid choice"
-     exit 1
-     ;;
-esac
+# Default to hg19/GRCh37 (no user input needed)
+CACHE_BUILD="hg19/GRCh37"
+ASSEMBLY="GRCh37"
+echo "Using genome build: hg19/GRCh37" >&2
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -58,18 +48,19 @@ if [ ! -f vep.sif ]; then
     singularity pull --name vep.sif docker://ensemblorg/ensembl-vep
 fi
 
+# Install VEP cache if needed (ASSEMBLY already set from auto-detection above)
 if [ "$CACHE_BUILD" = "hg19/GRCh37" ]; then
-    ASSEMBLY="GRCh37"
     if compgen -G "$REF_DIR/homo_sapiens/*GRCh37*" > /dev/null; then
-        echo "Cache for $CACHE_BUILD already exists."
+        echo "Cache for $CACHE_BUILD already exists." >&2
     else
+        echo "Installing VEP cache for $CACHE_BUILD..." >&2
         singularity exec --bind $REF_DIR:$REF_DIR vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh37
     fi
 elif [ "$CACHE_BUILD" = "hg38/GRCh38" ]; then
-    ASSEMBLY="GRCh38"
     if compgen -G "$REF_DIR/homo_sapiens/*GRCh38*" > /dev/null; then
-        echo "Cache for $CACHE_BUILD already exists."
+        echo "Cache for $CACHE_BUILD already exists." >&2
     else
+        echo "Installing VEP cache for $CACHE_BUILD..." >&2
         singularity exec --bind $REF_DIR:$REF_DIR vep.sif INSTALL.pl -c $REF_DIR -a cf -s homo_sapiens -y GRCh38
     fi
 fi
