@@ -2,14 +2,14 @@
 # Edit these values for your study, then simply run: ./bin/driver.sh
 
 # Study Information
-study_id: "SINAI_HEALTH_PILOT_090426"
-study_name: "SINAI_HEALTH_PILOT: Advanced and Metastatic Solid Tumours - Batch 09/04/2026 (Lerner-Ellis, Sinai)"
-study_description: "Pilot of genome sequencing data of advanced and metastatic solid tumours for 10 samples (contains mutation, SV and RNA data). Data provided on 09/04/2026."
+study_id: "SINAI_HEALTH_130426"
+study_name: "SINAI_HEALTH: Solid Tumours - Batch 13/04/2026 (Lerner-Ellis, Sinai)"
+study_description: "Pilot of genome sequencing data of solid tumours for 10 samples (contains mutation, SV and RNA data). Data provided on 13/04/2026."
 
-# Input Directories
-vcf_dir: "/scratch/frans/CBioPortal/Data/test_restructured/mutation_data"
-fusion_dir: "/scratch/frans/CBioPortal/Data/test_restructured/fusion_data"  # Optional, comment out or leave empty if not using
-rna_dir: "/scratch/frans/CBioPortal/Data/test_restructured/rna_data"        # Optional, comment out or leave empty if not using
+# Input Directories (change [NAME]_restructured to your original directory name)
+vcf_dir: "/scratch/frans/CBioPortal/Data/cbio_import_data_restructured/mutation_data"
+fusion_dir: "/scratch/frans/CBioPortal/Data/cbio_import_data_restructured/fusion_data"  # Optional, comment out or leave empty if not using
+rna_dir: "/scratch/frans/CBioPortal/Data/cbio_import_data_restructured/rna_data"        # Optional, comment out or leave empty if not using
 
 # sample_info_tsv will be deprecated. Each data type directory should contain its own sample_info.tsv file.
 # sample_info_tsv: "/scratch/frans/CBioPortal/sample_info.tsv"
