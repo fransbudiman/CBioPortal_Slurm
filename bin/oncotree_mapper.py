@@ -17,24 +17,37 @@ output_tsv = args.output_tsv
 # Read the input TSV
 df = pd.read_csv(input_tsv, sep='\t')
 
-# Add stub columns for oncotree mapping (TODO: implement actual mapping)
-# These are required by cBioPortal clinical data validation
-if 'CANCER_TYPE' not in df.columns:
-    df['CANCER_TYPE'] = 'Tissue'
+# Check if CANCER_TYPE column exists and has any non-empty values
+cancer_type_has_data = False
+if 'CANCER_TYPE' in df.columns:
+    # Check if any values are not NaN/None/empty string
+    cancer_type_has_data = df['CANCER_TYPE'].notna().any() and (df['CANCER_TYPE'].astype(str).str.strip() != '').any()
 
-if 'CANCER_TYPE_DETAILED' not in df.columns:
-    df['CANCER_TYPE_DETAILED'] = 'Tissue'
+if cancer_type_has_data:
+    # Cancer type data exists but oncotree mapping is not implemented yet
+    import sys
+    print("\n" + "="*70, file=sys.stderr)
+    print("ERROR: CANCER_TYPE data found but oncotree mapping not implemented!", file=sys.stderr)
+    print("="*70, file=sys.stderr)
+    print(f"\nInput file: {input_tsv}", file=sys.stderr)
+    print(f"Found {df['CANCER_TYPE'].notna().sum()} samples with cancer type data:", file=sys.stderr)
+    print("\nSample of cancer types found:", file=sys.stderr)
+    print(df[df['CANCER_TYPE'].notna()][['SAMPLE_ID', 'CANCER_TYPE']].head(10).to_string(index=False), file=sys.stderr)
+    print("\nACTION REQUIRED:", file=sys.stderr)
+    print("  1. Remove CANCER_TYPE column from sample_info.tsv files, OR", file=sys.stderr)
+    print("  2. Implement oncotree_mapper.py to map cancer types to ONCOTREE_CODE", file=sys.stderr)
+    print("\nPipeline stopped to prevent data loss.", file=sys.stderr)
+    print("="*70 + "\n", file=sys.stderr)
+    sys.exit(1)
 
-if 'ONCOTREE_CODE' not in df.columns:
-    df['ONCOTREE_CODE'] = 'TISSUE'
+# All cancer type entries are blank/missing - remove oncotree columns
+columns_to_remove = ['CANCER_TYPE', 'CANCER_TYPE_DETAILED', 'ONCOTREE_CODE']
+for col in columns_to_remove:
+    if col in df.columns:
+        df = df.drop(columns=[col])
 
-# if column exists but has missing values, fill with stub
-df['CANCER_TYPE'] = df['CANCER_TYPE'].fillna('Tissue')
-df['CANCER_TYPE_DETAILED'] = df['CANCER_TYPE_DETAILED'].fillna('Tissue')
-df['ONCOTREE_CODE'] = df['ONCOTREE_CODE'].fillna('tissue')
-
-# Write the updated TSV
+# Write the updated TSV (only SAMPLE_ID and PATIENT_ID)
 df.to_csv(output_tsv, sep='\t', index=False)
 
-print(f"Oncotree mapping completed (stub values added). Output: {output_tsv}")
+print(f"Oncotree mapping skipped (no cancer type data). Output: {output_tsv}")
 

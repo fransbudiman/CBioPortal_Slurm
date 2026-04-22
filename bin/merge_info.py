@@ -37,12 +37,13 @@ for file_path in sample_info_files:
 # remove duplicate entries based on SAMPLE_ID
 merged_df.drop_duplicates(subset=['SAMPLE_ID'], inplace=True)
 
-# Ensure all required columns for cBioPortal are present
-required_columns = ['PATIENT_ID', 'SAMPLE_ID', 'CANCER_TYPE', 'CANCER_TYPE_DETAILED', 'ONCOTREE_CODE']
-
-# Add PATIENT_ID if missing (derive from SAMPLE_ID)
+# Set PATIENT_ID = SAMPLE_ID, then modify SAMPLE_ID to be SAMPLE_ID_01
+# This ensures PATIENT_ID and SAMPLE_ID are different as required by cBioPortal
+# Note: CANCER_TYPE columns removed by oncotree_mapper.py if blank
 if 'PATIENT_ID' not in merged_df.columns:
     merged_df['PATIENT_ID'] = merged_df['SAMPLE_ID']
+
+merged_df['SAMPLE_ID'] = merged_df['SAMPLE_ID'] + '_01'
 
 # write the unified sample_info_unified.tsv
 # create temp directory for the study if it doesn't exist

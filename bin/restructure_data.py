@@ -34,10 +34,11 @@ def merge_sample_info(source_file, dest_file):
         print(f"  Warning: Source sample_info.tsv '{source_file}' is empty, skipping merge")
         return
     
-    # Fill empty CANCER_TYPE values with "Tissue"
+    # Fill empty CANCER_TYPE values with empty string (optional column)
+    # Note: oncotree_mapper.py will handle CANCER_TYPE validation and removal
     if 'CANCER_TYPE' in source_df.columns:
-        source_df['CANCER_TYPE'] = source_df['CANCER_TYPE'].fillna('Tissue')
-        source_df['CANCER_TYPE'] = source_df['CANCER_TYPE'].replace('', 'Tissue')
+        source_df['CANCER_TYPE'] = source_df['CANCER_TYPE'].fillna('')
+        source_df['CANCER_TYPE'] = source_df['CANCER_TYPE'].replace('', '')
     
     # If destination doesn't exist, write source as-is
     if not dest_file.exists():
